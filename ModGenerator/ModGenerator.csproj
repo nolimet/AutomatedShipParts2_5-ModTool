@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>default</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="Spectre.Console" Version="0.50.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="Templates\ActionTemplateModded.txt"/>
+        <None Remove="Templates\ActionTemplateVanilla"/>
+        <EmbeddedResource Include="Templates\ActionTemplateVanilla"/>
+        <None Remove="Templates\ModRulesBase.txt"/>
+        <None Remove="Templates\PartTemplateBase.txt"/>
+        <None Remove="Templates\PartTemplateRepeat.txt"/>
+        <None Remove="Templates\ActionTemplateModded"/>
+        <EmbeddedResource Include="Templates\ActionTemplateModded"/>
+        <None Remove="Templates\ModRulesBase"/>
+        <EmbeddedResource Include="Templates\ModRulesBase"/>
+        <None Remove="Templates\PartTemplateBase"/>
+        <EmbeddedResource Include="Templates\PartTemplateBase"/>
+        <None Remove="Templates\PartTemplateRepeat"/>
+        <EmbeddedResource Include="Templates\PartTemplateRepeat"/>
+    </ItemGroup>
+
+</Project>
