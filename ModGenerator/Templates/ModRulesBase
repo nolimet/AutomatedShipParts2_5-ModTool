@@ -1,0 +1,76 @@
+﻿ID = zoe.ai_terminal
+Name = "AI Core - Automated Ship Parts 2.5"
+CompatibleGameVersions = ["0.30.0"]
+ModifiesMultiplayer = true
+Logo = "logo.png"
+Description =
+	"AI core that can operate the part in front of it in place of crew.\n\n"\
+	"Aephiex did most of this already, I just made it a little better."\n\n"\
+	"Mod remade by Nolimet having created a silly tool to generate most of the silly mod"
+StringsFolder = "strings"
+
+Actions
+[
+	//the bit that gets the ai core in
+	{
+		Action = Add
+		AddTo = "<ships/terran/terran.rules>/Terran/Parts"
+		ToAdd = &<ai_terminal/ai_terminal.rules>/Part
+	}
+	{
+		Action = Add
+		AddTo = "<modes/career/techs.rules>/Techs"
+		ToAdd
+		{
+			ID = aephix.technology.ai_terminal
+			NameKey = &<ai_terminal/ai_terminal.rules>/Part/NameKey
+			DescriptionKey = &<ai_terminal/ai_terminal.rules>/Part/DescriptionKey
+			Icon = &<ai_terminal/ai_terminal.rules>/Part/EditorIcon
+			EditorGroups = ["Crew"]
+			PartsUnlocked = [ &<ai_terminal/ai_terminal.rules>/Part/ID ]
+			Cost = 10000
+			Prerequisites = [ cosmoteer.control_room_large, cosmoteer.sensor_array ]
+		}
+	}
+	{
+		Action = Add
+		AddTo = "<gui/game/parts/part_stats.rules>/PartStats"
+		ToAdd
+		{
+			ID = AephiexOperatingPower
+			FormatKey = "Stats/AephixOperatingPower"
+		}
+	}
+	{
+		Action = Overrides
+		OverrideIn = "<buffs/buffs.rules>/AephixAITerminal"
+		CreateIfNotExisting = true
+		Overrides
+		{
+			CombineMode = Add
+			BaseValue = 0
+
+			Icon
+			{
+				Texture
+				{
+					File = "ai_terminal/buff_ai.png"
+					MipLevels = 2
+					SampleMode = Linear
+				}
+				Size = [2, 2]
+			}
+			IconTextFormatKey = "BuildBox/BuffAephixAITerminal"
+
+			RectBorderColor = [10, 212, 98, 160]
+			RectFillColor = [10, 212, 98, 64]
+		}
+	}
+	{
+		Action = Add
+		AddTo = "<ships/base_part.rules>/Part/ReceivableBuffs"
+		Name = AephixAITerminal
+		ToAdd = AephixAITerminal
+	}
+	
+	//------------------------------------------------------------

@@ -1,0 +1,31 @@
+﻿PartCrew
+{
+	Type = MultiToggle
+	Toggles = [{CrewToggles}]
+	Mode = Any
+}
+
+NeedsCrewMinusNone
+{
+	Type = MultiToggle
+	Toggles = [{TogglesMinusNone}]
+	Mode = Any
+	Invert = True
+}
+
+PartCrewMinusNone
+{
+	Type = PartCrew
+	Crew = {CrewCount}
+	DefaultPriority = &/PRIORITIES/{DefaultPriority}
+	PrerequisitesBeforeCrewing = [{PrerequisitesBeforeCrewing}, NeedsCrewMinusNone]
+	HighPriorityPrerequisites = [{HighPriorityPrerequisites}]
+	CrewDestinations
+	[
+		{CrewDestinations}
+	]
+	CrewLocations
+	[
+		{CrewLocations}
+	]
+}

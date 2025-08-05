@@ -1,0 +1,25 @@
+﻿NeedsCrewMinus{CounterName}
+{
+	Type = BuffToggle
+	BuffType = AephixAITerminal
+	MaxBuffValue = {Counter}
+	MinBuffValue = {Counter}
+}
+PartCrewMinus{CounterName}
+{
+	Type = PartCrew
+	Crew = {RequiredCrew}
+	DefaultPriority = &/PRIORITIES/{DefaultPriority}
+	PrerequisitesBeforeCrewing = [{PrerequisitesBeforeCrewing}, NeedsCrewMinus{CounterName}]
+	HighPriorityPrerequisites = [BatteryStorage]
+	OverridePriorityKey = PartCrewMinusNone
+	HighPriorityPrerequisites = [{HighPriorityPrerequisites}]
+	CrewDestinations
+	[
+		{CrewDestinations}
+	]
+	CrewLocations
+	[
+		{CrewLocations}
+	]
+}
