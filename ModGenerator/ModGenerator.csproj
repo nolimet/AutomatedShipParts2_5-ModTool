@@ -16,14 +16,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Templates\ActionTemplateModded.txt"/>
-        <None Remove="Templates\ActionTemplateVanilla"/>
-        <EmbeddedResource Include="Templates\ActionTemplateVanilla"/>
-        <None Remove="Templates\ModRulesBase.txt"/>
-        <None Remove="Templates\PartTemplateBase.txt"/>
-        <None Remove="Templates\PartTemplateRepeat.txt"/>
         <None Remove="Templates\ActionTemplateModded"/>
         <EmbeddedResource Include="Templates\ActionTemplateModded"/>
+        <None Remove="Templates\ActionTemplateVanilla"/>
+        <EmbeddedResource Include="Templates\ActionTemplateVanilla"/>
         <None Remove="Templates\ModRulesBase"/>
         <EmbeddedResource Include="Templates\ModRulesBase"/>
         <None Remove="Templates\PartTemplateBase"/>
@@ -33,5 +29,4 @@
         <None Remove="Resources\steamcmd.exe"/>
         <EmbeddedResource Include="Resources\steamcmd.exe"/>
     </ItemGroup>
-
 </Project>
