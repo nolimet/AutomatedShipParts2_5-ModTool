@@ -8,7 +8,7 @@ public class TargetConfiguration(string? baseGamePath, List<ulong>? mods)
     public readonly string BaseGamePath = baseGamePath ?? string.Empty;
     public readonly List<ulong> Mods = mods ?? [];
 
-    public TargetConfiguration() : this(string.Empty, GetDefaultMods()) { }
+    public TargetConfiguration(string baseGamePath) : this(baseGamePath, GetDefaultMods()) { }
 
     private static List<ulong> GetDefaultMods() =>
     [

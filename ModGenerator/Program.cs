@@ -11,7 +11,12 @@ TargetConfiguration config;
 
 if (!File.Exists(configPath))
 {
-    config = new TargetConfiguration();
+    askForPath:
+    var baseGamePath = AnsiConsole.Ask<string>("Please enter the path to your base game:\n");
+    if (!Directory.Exists(baseGamePath)) goto askForPath;
+
+    baseGamePath = baseGamePath.Replace('\\', '/').Trim('"');
+    config = new TargetConfiguration(baseGamePath);
     File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
 }
 else
