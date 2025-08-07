@@ -2,22 +2,19 @@
 
 namespace ModGenerator.Config;
 
-public class TargetConfiguration
+[method: JsonConstructor]
+public class TargetConfiguration(string baseGamePath, string[] vanillaBlackList, Dictionary<ulong, string[]?> targetComponents)
 {
-    public readonly string BaseGamePath;
-    public readonly string[] VanillaBlackList;
+    public readonly string BaseGamePath = baseGamePath;
+    public readonly string[] VanillaBlackList = vanillaBlackList;
 
-    public readonly string BaseModPath;
-    public readonly Dictionary<long, string[]> TargetComponents;
+    public readonly Dictionary<ulong, string[]?> TargetComponents = targetComponents;
 
-    [JsonConstructor]
-    public TargetConfiguration(string baseGamePath, string[] vanillaBlackList, string baseModPath, Dictionary<long, string[]> targetComponents)
-    {
-        BaseGamePath = baseGamePath;
-        VanillaBlackList = vanillaBlackList;
-        BaseModPath = baseModPath;
-        TargetComponents = targetComponents;
-    }
+    public TargetConfiguration() : this("D:/SteamLibrary/steamapps/common/Cosmoteer", [], new Dictionary<ulong, string[]?> {{2888343841, null}}) { }
 
-    public TargetConfiguration() : this(string.Empty, [], string.Empty, new Dictionary<long, string[]>()) { }
+    private static Dictionary<ulong, string[]?> GetDefaultMods() =>
+        new()
+        {
+            {2888343841, null}
+        };
 }

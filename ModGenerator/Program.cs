@@ -1,11 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.Text.RegularExpressions;
 using ModGenerator;
 using ModGenerator.Config;
-using ModGenerator.Data;
+using ModGenerator.Helpers;
 using Newtonsoft.Json;
-using Spectre.Console;
+using AnsiConsole = Spectre.Console.AnsiConsole;
 
 var configPath = Path.Combine(AppContext.BaseDirectory, "ExportConfig.json");
 TargetConfiguration config;
@@ -31,20 +30,18 @@ var partsPath = Path.Combine(config.BaseGamePath ?? throw new NullReferenceExcep
 if (!Directory.Exists(partsPath))
     AnsiConsole.WriteLine("NOPE");
 
-var destinationsRegex = new Regex(@"^\s*CrewDestinations\s*\[\s*([\s\S]*?)\s*\]", RegexOptions.Multiline);
-var locationsRegex = new Regex(@"^\s*CrewLocations\s*\[\s*([\s\S]*?)\s*\]", RegexOptions.Multiline);
-var crewCountRegex = new Regex(@"((?:Crew = )(.+?))");
-Dictionary<string, CrewData> loadedRules = new();
-foreach (var file in Directory.GetFiles(partsPath, "*.rules", SearchOption.AllDirectories))
+var dataWriter = new DataWriter();
+dataWriter.Init();
+dataWriter.WriteVanillaData(config.BaseGamePath, PartHelper.GetParts(partsPath));
+
+var connector = new SteamCmdConnector();
+await connector.Init();
+
+foreach (var (modId, skippedParts) in config.TargetComponents)
 {
-    var data = File.ReadAllText(file);
-    var locationsResults = locationsRegex.Match(data);
-    var destinationsResults = destinationsRegex.Match(data);
-    var crewCountResult = crewCountRegex.Match(data);
-
-    if (locationsResults.Success && destinationsResults.Success && crewCountResult.Success)
-        loadedRules[file] = new CrewData(locationsResults.Value, destinationsResults.Value, crewCountResult.Value);
+    var path = connector.DownloadWorkshopItem(modId);
+    dataWriter.WriteModData(path, modId, PartHelper.GetParts(path));
 }
+var r = connector.DownloadWorkshopItem(3352091344);
 
-Console.WriteLine(loadedRules.First().Value);
-Console.WriteLine(TemplateStorage.ActionTemplateModded);
+await dataWriter.DisposeAsync();
