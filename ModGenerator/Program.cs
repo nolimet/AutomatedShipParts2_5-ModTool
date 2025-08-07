@@ -37,7 +37,7 @@ dataWriter.WriteVanillaData(config.BaseGamePath, PartHelper.GetParts(partsPath))
 var connector = new SteamCmdConnector();
 await connector.Init();
 
-foreach (var (modId, skippedParts) in config.TargetComponents)
+foreach (var modId in config.Mods)
 {
     var path = connector.DownloadWorkshopItem(modId);
     dataWriter.WriteModData(path, modId, PartHelper.GetParts(path));
