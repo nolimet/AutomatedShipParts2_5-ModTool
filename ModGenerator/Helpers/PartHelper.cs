@@ -5,7 +5,7 @@ namespace ModGenerator.Helpers;
 
 public static class PartHelper
 {
-    private static readonly Regex DestinationsRegex = new(@"CrewDestinations\s*\[\s*([\s\S]*?)\s*\]");
+    private static readonly Regex DestinationsRegex = new(@"CrewDestinations\s*\[\s*((?:\s*\[.*?\]\s*)+|([\s\S]*?))\]");
     private static readonly Regex LocationsRegex = new(@"CrewLocations\s*\[\s*([\s\S]*?)\s*\]");
     private static readonly Regex CrewCountRegex = new(@"Crew ?= ?(\d+)");
     private static readonly Regex DefaultPriorityRegex = new(@"DefaultPriority = &/PRIORITIES/(\S*)");
