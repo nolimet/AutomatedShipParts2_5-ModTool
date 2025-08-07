@@ -5,15 +5,16 @@ namespace ModGenerator.Helpers;
 
 public static class PartHelper
 {
-    private static readonly Regex DestinationsRegex = new(@"^\s*CrewDestinations\s*\[\s*([\s\S]*?)\s*\]", RegexOptions.Multiline);
-    private static readonly Regex LocationsRegex = new(@"^\s*CrewLocations\s*\[\s*([\s\S]*?)\s*\]", RegexOptions.Multiline);
-    private static readonly Regex CrewCountRegex = new(@"Crew = (.+?)");
+    private static readonly Regex DestinationsRegex = new(@"CrewDestinations\s*\[\s*([\s\S]*?)\s*\]");
+    private static readonly Regex LocationsRegex = new(@"CrewLocations\s*\[\s*([\s\S]*?)\s*\]");
+    private static readonly Regex CrewCountRegex = new(@"Crew ?= ?(\d+)");
     private static readonly Regex DefaultPriorityRegex = new(@"DefaultPriority = &/PRIORITIES/(\S*)");
-    private static readonly Regex CrewingRequirementsRegex = new(@"PrerequisitesBeforeCrewing = \[(\S+)\]");
-    private static readonly Regex HighPriorityPrerequisitesRegex = new(@"HighPriorityPrerequisites = \[(\S+)\]");
+    private static readonly Regex CrewingRequirementsRegex = new(@"PrerequisitesBeforeCrewing = \[(.+)\]");
+    private static readonly Regex HighPriorityPrerequisitesRegex = new(@"HighPriorityPrerequisites = \[(.+)\]");
 
     public static Dictionary<string, CrewData> GetParts(string path)
     {
+        Console.WriteLine(path);
         Dictionary<string, CrewData> loadedRules = new();
         foreach (var file in Directory.GetFiles(path, "*.rules", SearchOption.AllDirectories))
         {
@@ -37,6 +38,8 @@ public static class PartHelper
                     highPriorityPrerequisites: highPriorityPrerequisitesResult.Groups[1].Value
                 );
             }
+            else if (crewCountResult.Success)
+                Console.WriteLine($"Failed for {Path.GetFileNameWithoutExtension(file)}. Results locations:{locationsResults.Success},  destinations:{destinationsResults.Success}, crewCount:{crewCountResult.Success}, defaultPriority:{defaultPriorityResult.Success}, crewingRequirement:{crewingRequirementsResult.Success}, highPriorityRequests:{highPriorityPrerequisitesResult.Success}");
         }
 
         return loadedRules;
