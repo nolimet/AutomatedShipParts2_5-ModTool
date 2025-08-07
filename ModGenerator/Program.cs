@@ -42,6 +42,5 @@ foreach (var modId in config.Mods)
     var path = connector.DownloadWorkshopItem(modId);
     dataWriter.WriteModData(path, modId, PartHelper.GetParts(path));
 }
-var r = connector.DownloadWorkshopItem(3352091344);
 
 await dataWriter.DisposeAsync();
