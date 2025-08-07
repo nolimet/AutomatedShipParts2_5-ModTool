@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using ModGenerator.Helpers;
+using Spectre.Console;
 
 namespace ModGenerator;
 
@@ -13,6 +15,9 @@ public class SteamCmdConnector
     private const string SteamCmdContentPath = "steamapps/workshop/content";
     private readonly string _steamCmdPath = Path.Combine(AppContext.BaseDirectory, SteamCmdLocalFolder, SteamCmdExecutableName);
 
+    private string? _userName;
+    private const string SteamCmdConfigPath = "steamcmd.config";
+
     public async Task Init()
     {
         if (!File.Exists(_steamCmdPath))
@@ -24,6 +29,15 @@ public class SteamCmdConnector
             await using var writer = File.Create(_steamCmdPath);
             await stream.CopyToAsync(writer);
             await stream.FlushAsync();
+        }
+
+        var configPath = Path.Combine(AppContext.BaseDirectory, SteamCmdConfigPath);
+        if (File.Exists(configPath))
+            _userName = Encoding.UTF8.GetString((await File.ReadAllBytesAsync(configPath)).Decrypt());
+        else
+        {
+            _userName = AnsiConsole.Ask<string>("Please enter you steam user name");
+            await File.WriteAllBytesAsync(configPath, Encoding.UTF8.GetBytes(_userName).Encrypt());
         }
     }
 
@@ -42,7 +56,7 @@ public class SteamCmdConnector
             StartInfo = new ProcessStartInfo
             {
                 FileName = _steamCmdPath,
-                Arguments = $"+login danio63 +{DownloadCommand} {GameId} {itemId} +quit", // Example arguments
+                Arguments = $"+login {_userName} +{DownloadCommand} {GameId} {itemId} +quit", // Example arguments
                 RedirectStandardOutput = false,
                 RedirectStandardError = false,
                 UseShellExecute = true,
