@@ -1,14 +1,15 @@
 ﻿using System.Text.RegularExpressions;
 using ModGenerator.Data;
+using Spectre.Console;
 
 namespace ModGenerator.Helpers;
 
 public static class PartHelper
 {
-    private static readonly Regex DestinationsRegex = new(@"CrewDestinations\s*\[\s*((?:\s*\[.*?\]\s*)+|([\s\S]*?))\]");
-    private static readonly Regex LocationsRegex = new(@"CrewLocations\s*\[\s*([\s\S]*?)\s*\]");
+    private static readonly Regex DestinationsRegex = new(@"CrewDestinations.*\s*\[\s*((?:\s*\[.*?\]\s*)+|([\s\S]*?))\]");
+    private static readonly Regex LocationsRegex = new(@"CrewLocations.*\s*\[\s*([\s\S]*?)\s*\]");
     private static readonly Regex CrewCountRegex = new(@"Crew ?= ?(\d+)");
-    private static readonly Regex DefaultPriorityRegex = new(@"DefaultPriority = &/PRIORITIES/(\S*)");
+    private static readonly Regex DefaultPriorityRegex = new(@"DefaultPriority = &(\S*)");
     private static readonly Regex CrewingRequirementsRegex = new(@"PrerequisitesBeforeCrewing = \[(.+)\]");
     private static readonly Regex HighPriorityPrerequisitesRegex = new(@"HighPriorityPrerequisites = \[(.+)\]");
 
@@ -16,6 +17,10 @@ public static class PartHelper
     {
         Console.WriteLine(path);
         Dictionary<string, CrewData> loadedRules = new();
+        Grid issuesGrid = new();
+        issuesGrid.AddColumns(7);
+        issuesGrid.AddRow("Part", "Locations", "Destinations", "CrewCount", "DefaultPriority", "CrewingRequirements", "HighPriorityPrerequisites");
+
         foreach (var file in Directory.GetFiles(path, "*.rules", SearchOption.AllDirectories))
         {
             var data = File.ReadAllText(file);
@@ -39,8 +44,10 @@ public static class PartHelper
                 );
             }
             else if (crewCountResult.Success)
-                Console.WriteLine($"Failed for {Path.GetFileNameWithoutExtension(file)}. Results locations:{locationsResults.Success},  destinations:{destinationsResults.Success}, crewCount:{crewCountResult.Success}, defaultPriority:{defaultPriorityResult.Success}, crewingRequirement:{crewingRequirementsResult.Success}, highPriorityRequests:{highPriorityPrerequisitesResult.Success}");
+                issuesGrid.AddRow(Path.GetFileNameWithoutExtension(file), locationsResults.Success.ToString(), destinationsResults.Success.ToString(), crewCountResult.Groups[1].Value, defaultPriorityResult.Success.ToString(), crewingRequirementsResult.Success.ToString(), highPriorityPrerequisitesResult.Success.ToString());
         }
+
+        if (issuesGrid.Rows.Count > 1) AnsiConsole.Write(issuesGrid);
 
         return loadedRules;
     }
