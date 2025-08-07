@@ -12,6 +12,7 @@
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="Spectre.Console" Version="0.50.0"/>
+        <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.8"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -29,8 +30,8 @@
         <EmbeddedResource Include="Templates\PartTemplateBase"/>
         <None Remove="Templates\PartTemplateRepeat"/>
         <EmbeddedResource Include="Templates\PartTemplateRepeat"/>
-        <None Remove="Resources\steamcmd.exe" />
-        <EmbeddedResource Include="Resources\steamcmd.exe" />
+        <None Remove="Resources\steamcmd.exe"/>
+        <EmbeddedResource Include="Resources\steamcmd.exe"/>
     </ItemGroup>
 
 </Project>
