@@ -1,6 +1,7 @@
 ﻿namespace ModGenerator.Data;
 
-public readonly struct PartData
+public readonly struct PartData(CrewData crewData, ModInfo modInfo)
 {
-    public readonly CrewData CrewData;
+    public readonly CrewData CrewData = crewData;
+    public readonly ModInfo ModInfo = modInfo;
 }

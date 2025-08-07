@@ -6,6 +6,8 @@ namespace ModGenerator;
 
 public class DataWriter : IDisposable, IAsyncDisposable
 {
+    private bool _disposed;
+
     private readonly string BasePath = Path.Combine(AppContext.BaseDirectory, "Output");
 
     private readonly StreamWriter _modRulesWriter;
@@ -40,9 +42,9 @@ public class DataWriter : IDisposable, IAsyncDisposable
             var partName = path.Split('/')[^1].Split('\\')[^1];
             Dictionary<string, string> actionReplacements = new()
             {
-                {"PartName", path.Split('/')[^1].Split('\\')[^1]},
-                {"PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..])},
-                {"CrewCount", crewData.CrewCount}
+                { "PartName", path.Split('/')[^1].Split('\\')[^1] },
+                { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..]) },
+                { "CrewCount", crewData.CrewCount }
             };
             _modRulesWriter.WriteLine(FillTemplate(TemplateStorage.ActionTemplateVanilla, actionReplacements));
 
@@ -50,23 +52,27 @@ public class DataWriter : IDisposable, IAsyncDisposable
         }
     }
 
-    public void WriteModData(string basePath, ulong modId, Dictionary<string, CrewData> parts)
+    public void WriteModData(string basePath, ulong modId, Dictionary<string, CrewData> parts, ModInfo? rawModInfo)
     {
+        if (rawModInfo is not { } modInfo) throw new NullReferenceException("Mod info is null!");
+
         var modBasePath = Path.Combine(BasePath, modId.ToString());
         Directory.CreateDirectory(modBasePath);
 
-        AnsiConsole.Write($"Found {parts.Count} parts for mod with id {modId}");
-        _modRulesWriter.WriteLine($"\t//----{modId}----");
+        Console.WriteLine($"Found {parts.Count} parts for mod {modId} with name {modInfo.Name}, version {modInfo.Version}, game version {modInfo.GameVersion}");
+        _modRulesWriter.WriteLine();
+        _modRulesWriter.WriteLine($"\t//{modInfo.Name}, version {modInfo.Version}, game version {modInfo.GameVersion}");
+
         foreach (var (path, crewData) in parts)
         {
             var partName = path.Split('/')[^1].Split('\\')[^1];
             Dictionary<string, string> actionReplacements = new()
             {
-                {"PartName", partName},
-                {"PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..])},
-                {"CrewCount", crewData.CrewCount},
-                {"ModID", modId.ToString()},
-                {"OverrideRulePath", Path.Combine(modId.ToString(), partName)}
+                { "PartName", partName },
+                { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..]) },
+                { "CrewCount", crewData.CrewCount },
+                { "ModID", modId.ToString() },
+                { "OverrideRulePath", Path.Combine(modId.ToString(), partName) }
             };
             _modRulesWriter.WriteLine(FillTemplate(TemplateStorage.ActionTemplateModded, actionReplacements));
 
@@ -83,14 +89,14 @@ public class DataWriter : IDisposable, IAsyncDisposable
 
         Dictionary<string, string> partReplacements = new()
         {
-            {"CrewCount", crewData.CrewCount},
-            {"CrewDestinations", crewData.Destinations},
-            {"CrewLocations", crewData.Locations},
-            {"DefaultPriority", crewData.DefaultPriority},
-            {"PrerequisitesBeforeCrewing", crewData.CrewingPrerequisites},
-            {"HighPriorityPrerequisites", crewData.HighPriorityPrerequisites},
-            {"TogglesMinusNone", string.Join(", ", crewToggleNames[1..])},
-            {"CrewToggles", string.Join(", ", crewToggleNames)}
+            { "CrewCount", crewData.CrewCount },
+            { "CrewDestinations", crewData.Destinations },
+            { "CrewLocations", crewData.Locations },
+            { "DefaultPriority", crewData.DefaultPriority },
+            { "PrerequisitesBeforeCrewing", crewData.CrewingPrerequisites },
+            { "HighPriorityPrerequisites", crewData.HighPriorityPrerequisites },
+            { "TogglesMinusNone", string.Join(", ", crewToggleNames[1..]) },
+            { "CrewToggles", string.Join(", ", crewToggleNames) }
         };
 
         partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateBase, partReplacements));
@@ -108,13 +114,42 @@ public class DataWriter : IDisposable, IAsyncDisposable
 
     public void Dispose()
     {
-        _modRulesWriter.Flush();
-        _modRulesWriter.Dispose();
+        if (_disposed) return;
+        _disposed = true;
+
+        try
+        {
+            // Flush is optional because Dispose flushes; keep it if you want best-effort sync flush.
+            _modRulesWriter.Flush();
+        }
+        catch
+        {
+            // Swallow or log; don't let flushing errors prevent resource release.
+        }
+        finally
+        {
+            _modRulesWriter.Dispose();
+            GC.SuppressFinalize(this);
+        }
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _modRulesWriter.FlushAsync();
-        await _modRulesWriter.DisposeAsync();
+        if (_disposed) return;
+        _disposed = true;
+
+        try
+        {
+            await _modRulesWriter.FlushAsync().ConfigureAwait(false);
+        }
+        catch
+        {
+            // Swallow or log.
+        }
+        finally
+        {
+            await _modRulesWriter.DisposeAsync().ConfigureAwait(false);
+            GC.SuppressFinalize(this);
+        }
     }
 }
