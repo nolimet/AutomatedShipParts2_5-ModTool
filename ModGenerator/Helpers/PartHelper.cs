@@ -15,7 +15,6 @@ public static class PartHelper
 
     public static Dictionary<string, CrewData> GetParts(string path)
     {
-        Console.WriteLine(path);
         Dictionary<string, CrewData> loadedRules = new();
         Grid issuesGrid = new();
         issuesGrid.AddColumns(7);
@@ -47,7 +46,11 @@ public static class PartHelper
                 issuesGrid.AddRow(Path.GetFileNameWithoutExtension(file), locationsResults.Success.ToString(), destinationsResults.Success.ToString(), crewCountResult.Groups[1].Value, defaultPriorityResult.Success.ToString(), crewingRequirementsResult.Success.ToString(), highPriorityPrerequisitesResult.Success.ToString());
         }
 
-        if (issuesGrid.Rows.Count > 1) AnsiConsole.Write(issuesGrid);
+        if (issuesGrid.Rows.Count > 1)
+        {
+            AnsiConsole.Write(issuesGrid);
+            AnsiConsole.WriteLine();
+        }
 
         return loadedRules;
     }

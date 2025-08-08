@@ -12,6 +12,10 @@ public class TargetConfiguration(string? baseGamePath, List<ulong>? mods)
 
     private static List<ulong> GetDefaultMods() =>
     [
-        2888343841
+        2888343841,
+        2886141879,
+        3052680147,
+        3121346591,
+        3119349707
     ];
 }

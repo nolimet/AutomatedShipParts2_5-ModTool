@@ -42,9 +42,10 @@ dataWriter.WriteVanillaData(config.BaseGamePath, PartHelper.GetParts(partsPath))
 var connector = new SteamCmdConnector();
 await connector.Init();
 
-foreach (var modId in config.Mods)
+var list = connector.DownloadWorkshopItems(config.Mods);
+for (var index = 0; index < list.Count; index++)
 {
-    var path = connector.DownloadWorkshopItem(modId);
+    var (path, modId) = list[index];
     dataWriter.WriteModData(path, modId, PartHelper.GetParts(path), ModInfoHelper.GetModInfo(path));
 }
 

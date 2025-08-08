@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using ModGenerator.Data;
+using Spectre.Console;
 
 namespace ModGenerator.Helpers;
 
@@ -19,10 +20,20 @@ public static class ModInfoHelper
         var versionResult = VersionRegex.Match(data);
         var gameVersionResult = GameVersionRegex.Match(data);
 
-        if (nameResult.Success && versionResult.Success && gameVersionResult.Success)
-            return new ModInfo(nameResult.Groups[1].Value.Trim().Trim('"'), versionResult.Groups[1].Value, gameVersionResult.Groups[1].Value);
+        var g = new Grid();
+        g.AddColumns(3);
+        g.AddRow("ModName", "Version", "GameVersion");
+        g.AddRow
+        (
+            nameResult.Success ? nameResult.Groups[1].Value.Trim().Trim('"').RemoveMarkup() : "null",
+            versionResult.Success ? versionResult.Groups[1].Value.Trim().Trim('"').RemoveMarkup() : "null",
+            gameVersionResult.Success ? gameVersionResult.Groups[1].Value.Trim().Trim('"').RemoveMarkup() : "null"
+        );
 
-        Console.WriteLine($"Failed to find mod info at {modRulesPath}");
+        AnsiConsole.Write(g);
+
+        if (nameResult.Success && versionResult.Success && gameVersionResult.Success)
+            return new ModInfo(nameResult.Groups[1].Value.Trim().Trim('"'), versionResult.Groups[1].Value.Trim().Trim('"'), gameVersionResult.Groups[1].Value.Trim().Trim('"'));
         return null;
     }
 }

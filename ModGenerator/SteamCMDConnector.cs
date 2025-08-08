@@ -41,6 +41,37 @@ public class SteamCmdConnector
         }
     }
 
+    public List<(string, ulong)> DownloadWorkshopItems(List<ulong> modIds)
+    {
+        List<(string path, ulong modId)> items = modIds.Select(x => (Path.Combine(AppContext.BaseDirectory, SteamCmdLocalFolder, SteamCmdContentPath, GameId.ToString(), x.ToString()), x)).ToList();
+
+        var missing = items.Where(x => !Directory.Exists(x.path)).ToArray();
+        if (!missing.Any()) return items;
+
+        var modDownloadArg = $"+{DownloadCommand} {GameId} " + string.Join($" +{DownloadCommand} {GameId} ", missing.Select(x => x.modId));
+        var process = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = _steamCmdPath,
+                Arguments = $"+login {_userName} {modDownloadArg} +quit", // Example arguments
+                RedirectStandardOutput = false,
+                RedirectStandardError = false,
+                UseShellExecute = true,
+                CreateNoWindow = false,
+                WindowStyle = ProcessWindowStyle.Normal
+            }
+        };
+
+        // Start the process
+        process.Start();
+
+        // Wait for exit
+        process.WaitForExit();
+
+        return items;
+    }
+
     /// <summary>
     /// Downloads a mod
     /// </summary>
