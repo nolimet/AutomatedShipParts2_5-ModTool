@@ -13,7 +13,7 @@ public static class PartHelper
     private static readonly Regex CrewingRequirementsRegex = new(@"PrerequisitesBeforeCrewing = \[(.+)\]");
     private static readonly Regex HighPriorityPrerequisitesRegex = new(@"HighPriorityPrerequisites = \[(.+)\]");
 
-    public static Dictionary<string, CrewData> GetParts(string path)
+    public static (Dictionary<string, CrewData> parts, Grid report) GetParts(string path)
     {
         Dictionary<string, CrewData> loadedRules = new();
         Grid issuesGrid = new();
@@ -46,12 +46,6 @@ public static class PartHelper
                 issuesGrid.AddRow(Path.GetFileNameWithoutExtension(file), locationsResults.Success.ToString(), destinationsResults.Success.ToString(), crewCountResult.Groups[1].Value, defaultPriorityResult.Success.ToString(), crewingRequirementsResult.Success.ToString(), highPriorityPrerequisitesResult.Success.ToString());
         }
 
-        if (issuesGrid.Rows.Count > 1)
-        {
-            AnsiConsole.Write(issuesGrid);
-            AnsiConsole.WriteLine();
-        }
-
-        return loadedRules;
+        return (loadedRules, issuesGrid);
     }
 }

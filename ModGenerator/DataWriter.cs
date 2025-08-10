@@ -31,20 +31,21 @@ public class DataWriter : IDisposable, IAsyncDisposable
         return template;
     }
 
-    public void WriteVanillaData(string basePath, Dictionary<string, CrewData> parts)
+    public void WriteVanillaData(string basePath)
     {
         var vanillaBasePAth = Path.Combine(BasePath, "vanilla");
         Directory.CreateDirectory(vanillaBasePAth);
-
+        var (parts, report) = PartHelper.GetParts(basePath);
         AnsiConsole.WriteLine($"Found {parts.Count} vanilla parts");
+        AnsiConsole.Write(report);
         foreach (var (path, crewData) in parts)
         {
             var partName = path.Split('/')[^1].Split('\\')[^1];
             Dictionary<string, string> actionReplacements = new()
             {
-                {"PartName", path.Split('/')[^1].Split('\\')[^1]},
-                {"PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..])},
-                {"CrewCount", crewData.CrewCount}
+                { "PartName", path.Split('/')[^1].Split('\\')[^1] },
+                { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..]) },
+                { "CrewCount", crewData.CrewCount }
             };
             _modRulesWriter.WriteLine(FillTemplate(TemplateStorage.ActionTemplateVanilla, actionReplacements));
 
@@ -52,9 +53,9 @@ public class DataWriter : IDisposable, IAsyncDisposable
         }
     }
 
-    public void WriteModData(string basePath, ulong modId, Dictionary<string, CrewData> parts, ModInfo? rawModInfo)
+    public void WriteModData(string basePath, ulong modId)
     {
-        if (rawModInfo is not { } modInfo)
+        if (ModInfoHelper.GetModInfo(basePath) is not { } modInfo)
         {
             AnsiConsole.MarkupLine($"[red]ModInfo is null![/] Cannot be null! Skipping {modId} at {basePath}");
             return;
@@ -63,7 +64,10 @@ public class DataWriter : IDisposable, IAsyncDisposable
         var modBasePath = Path.Combine(BasePath, modId.ToString());
         Directory.CreateDirectory(modBasePath);
 
-        Console.WriteLine($"Found {parts.Count} parts for mod {modId} with name {modInfo.Name}, version {modInfo.Version}, game version {modInfo.GameVersion}");
+        var (parts, report) = PartHelper.GetParts(basePath);
+        Console.WriteLine($"Found {parts.Count} for mod {modId} with name {modInfo.Name}, version {modInfo.Version}, game version {modInfo.GameVersion}");
+        AnsiConsole.Write(report);
+
         _modRulesWriter.WriteLine();
         _modRulesWriter.WriteLine($"\t//{modInfo.Name}, version {modInfo.Version}, game version {modInfo.GameVersion}");
 
@@ -72,16 +76,17 @@ public class DataWriter : IDisposable, IAsyncDisposable
             var partName = path.Split('/')[^1].Split('\\')[^1];
             Dictionary<string, string> actionReplacements = new()
             {
-                {"PartName", partName},
-                {"PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..])},
-                {"CrewCount", crewData.CrewCount},
-                {"ModID", modId.ToString()},
-                {"OverrideRulePath", Path.Combine(modId.ToString(), partName)}
+                { "PartName", partName },
+                { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..]) },
+                { "CrewCount", crewData.CrewCount },
+                { "ModID", modId.ToString() },
+                { "OverrideRulePath", Path.Combine(modId.ToString(), partName) }
             };
 
             _modRulesWriter.WriteLine(FillTemplate(TemplateStorage.ActionTemplateModded, actionReplacements));
             CreateOverride(modBasePath, partName, crewData);
         }
+
         Console.WriteLine();
     }
 
@@ -94,14 +99,14 @@ public class DataWriter : IDisposable, IAsyncDisposable
 
         Dictionary<string, string> partReplacements = new()
         {
-            {"CrewCount", crewData.CrewCount},
-            {"CrewDestinations", crewData.Destinations},
-            {"CrewLocations", crewData.Locations},
-            {"DefaultPriority", crewData.DefaultPriority},
-            {"PrerequisitesBeforeCrewing", crewData.CrewingPrerequisites},
-            {"HighPriorityPrerequisites", crewData.HighPriorityPrerequisites},
-            {"TogglesMinusNone", string.Join(", ", crewToggleNames[1..])},
-            {"CrewToggles", string.Join(", ", crewToggleNames)}
+            { "CrewCount", crewData.CrewCount },
+            { "CrewDestinations", crewData.Destinations },
+            { "CrewLocations", crewData.Locations },
+            { "DefaultPriority", crewData.DefaultPriority },
+            { "PrerequisitesBeforeCrewing", crewData.CrewingPrerequisites },
+            { "HighPriorityPrerequisites", crewData.HighPriorityPrerequisites },
+            { "TogglesMinusNone", string.Join(", ", crewToggleNames[1..]) },
+            { "CrewToggles", string.Join(", ", crewToggleNames) }
         };
 
         partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateBase, partReplacements));

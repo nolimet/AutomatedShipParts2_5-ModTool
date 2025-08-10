@@ -2,7 +2,6 @@
 
 using ModGenerator;
 using ModGenerator.Config;
-using ModGenerator.Helpers;
 using Newtonsoft.Json;
 using AnsiConsole = Spectre.Console.AnsiConsole;
 
@@ -37,7 +36,7 @@ if (!Directory.Exists(partsPath))
 
 var dataWriter = new DataWriter();
 dataWriter.Init();
-dataWriter.WriteVanillaData(config.BaseGamePath, PartHelper.GetParts(partsPath));
+dataWriter.WriteVanillaData(config.BaseGamePath);
 
 var connector = new SteamCmdConnector();
 await connector.Init();
@@ -46,7 +45,7 @@ var list = connector.DownloadWorkshopItems(config.Mods);
 for (var index = 0; index < list.Count; index++)
 {
     var (path, modId) = list[index];
-    dataWriter.WriteModData(path, modId, PartHelper.GetParts(path), ModInfoHelper.GetModInfo(path));
+    dataWriter.WriteModData(path, modId);
 }
 
 await dataWriter.DisposeAsync();
