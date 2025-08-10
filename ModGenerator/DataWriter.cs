@@ -51,6 +51,8 @@ public class DataWriter : IDisposable, IAsyncDisposable
 
             CreateOverride(vanillaBasePAth, partName, crewData);
         }
+
+        Console.WriteLine();
     }
 
     public void WriteModData(string basePath, ulong modId)
@@ -65,7 +67,7 @@ public class DataWriter : IDisposable, IAsyncDisposable
         Directory.CreateDirectory(modBasePath);
 
         var (parts, report) = PartHelper.GetParts(basePath);
-        Console.WriteLine($"Found {parts.Count} for mod {modId} with name {modInfo.Name}, version {modInfo.Version}, game version {modInfo.GameVersion}");
+        Console.WriteLine($"Found {parts.Count} valid parts");
         AnsiConsole.Write(report);
 
         _modRulesWriter.WriteLine();
