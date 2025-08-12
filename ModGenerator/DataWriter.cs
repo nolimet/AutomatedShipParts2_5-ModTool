@@ -37,7 +37,9 @@ public class DataWriter : IDisposable, IAsyncDisposable
         Directory.CreateDirectory(vanillaBasePAth);
         var (parts, report) = PartHelper.GetParts(basePath);
         AnsiConsole.WriteLine($"Found {parts.Count} vanilla parts");
-        AnsiConsole.Write(report);
+        if (report.Rows.Count > 1)
+            AnsiConsole.Write(report);
+
         foreach (var (path, crewData) in parts)
         {
             var partName = path.Split('/')[^1].Split('\\')[^1];
@@ -45,7 +47,8 @@ public class DataWriter : IDisposable, IAsyncDisposable
             {
                 { "PartName", path.Split('/')[^1].Split('\\')[^1] },
                 { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..]) },
-                { "CrewCount", crewData.CrewCount }
+                { "CrewCount", crewData.CrewCount },
+                { "OverrideRulePath", Path.Combine("vanilla", partName) }
             };
             _modRulesWriter.WriteLine(FillTemplate(TemplateStorage.ActionTemplateVanilla, actionReplacements));
 
@@ -55,7 +58,7 @@ public class DataWriter : IDisposable, IAsyncDisposable
         Console.WriteLine();
     }
 
-    public void WriteModData(string basePath, ulong modId)
+    public void WriteModData(string basePath, ulong modId, IReadOnlyList<string>? ignoredParts)
     {
         if (ModInfoHelper.GetModInfo(basePath) is not { } modInfo)
         {
@@ -66,9 +69,10 @@ public class DataWriter : IDisposable, IAsyncDisposable
         var modBasePath = Path.Combine(BasePath, modId.ToString());
         Directory.CreateDirectory(modBasePath);
 
-        var (parts, report) = PartHelper.GetParts(basePath);
+        var (parts, report) = PartHelper.GetParts(basePath, ignoredParts);
         Console.WriteLine($"Found {parts.Count} valid parts");
-        AnsiConsole.Write(report);
+        if (report.Rows.Count > 1)
+            AnsiConsole.Write(report);
 
         _modRulesWriter.WriteLine();
         _modRulesWriter.WriteLine($"\t//{modInfo.Name}, version {modInfo.Version}, game version {modInfo.GameVersion}");
@@ -113,10 +117,11 @@ public class DataWriter : IDisposable, IAsyncDisposable
 
         partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateBase, partReplacements));
 
-        for (var i = 1; i < crewCount; i++)
+        for (var i = 0; i < crewCount; i++)
         {
-            partReplacements["CounterName"] = NumberToText.Convert(i);
+            partReplacements["CounterName"] = NumberToText.Convert(i + 1);
             partReplacements["Counter"] = i.ToString();
+            partReplacements["RequiredCrew"] = Math.Max(0, crewCount - (i + 1)).ToString();
             partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateRepeat, partReplacements));
         }
 
@@ -131,6 +136,7 @@ public class DataWriter : IDisposable, IAsyncDisposable
 
         try
         {
+            _modRulesWriter.WriteLine("]");
             // Flush is optional because Dispose flushes; keep it if you want best-effort sync flush.
             _modRulesWriter.Flush();
         }
@@ -152,6 +158,7 @@ public class DataWriter : IDisposable, IAsyncDisposable
 
         try
         {
+            await _modRulesWriter.WriteLineAsync("]");
             await _modRulesWriter.FlushAsync().ConfigureAwait(false);
         }
         catch
