@@ -45,7 +45,7 @@ var list = connector.DownloadWorkshopItems(config.Mods);
 for (var index = 0; index < list.Count; index++)
 {
     var (path, modId) = list[index];
-    dataWriter.WriteModData(path, modId);
+    dataWriter.WriteModData(path, modId, config.IgnoredParts.GetValueOrDefault(modId));
 }
 
 await dataWriter.DisposeAsync();
