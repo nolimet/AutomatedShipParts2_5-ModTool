@@ -6,14 +6,14 @@ namespace ModGenerator.Helpers;
 
 public static class PartHelper
 {
-    private static readonly Regex DestinationsRegex = new(@"CrewDestinations.*\s*\[\s*((?:\s*\[.*?\]\s*)+|([\s\S]*?))\]");
-    private static readonly Regex LocationsRegex = new(@"CrewLocations.*\s*\[\s*([\s\S]*?)\s*\]");
+    private static readonly Regex DestinationsRegex = new(@"CrewDestinations.*\s*\[\s*((?:\s*\[.*?\]\s*)+|([\s\S]*?))\]", RegexOptions.Multiline);
+    private static readonly Regex LocationsRegex = new(@"CrewLocations.*\s*\[\s*((?:\s*\[.*?\]\s*)+|([\s\S]*?))\]", RegexOptions.Multiline);
     private static readonly Regex CrewCountRegex = new(@"Crew ?= ?(\d+)");
     private static readonly Regex DefaultPriorityRegex = new(@"DefaultPriority = &(\S*)");
-    private static readonly Regex CrewingRequirementsRegex = new(@"PrerequisitesBeforeCrewing = \[(.+)\]");
-    private static readonly Regex HighPriorityPrerequisitesRegex = new(@"HighPriorityPrerequisites = \[(.+)\]");
+    private static readonly Regex CrewingRequirementsRegex = new(@"PrerequisitesBeforeCrewing = \[([\S ]+?)\]");
+    private static readonly Regex HighPriorityPrerequisitesRegex = new(@"HighPriorityPrerequisites = \[(\S+?)\]");
 
-    public static (Dictionary<string, CrewData> parts, Grid report) GetParts(string path)
+    public static (Dictionary<string, CrewData> parts, Grid report) GetParts(string path, IReadOnlyList<string>? ignoredParts = null)
     {
         Dictionary<string, CrewData> loadedRules = new();
         Grid issuesGrid = new();
@@ -22,6 +22,15 @@ public static class PartHelper
 
         foreach (var file in Directory.GetFiles(path, "*.rules", SearchOption.AllDirectories))
         {
+            if (ignoredParts is not null)
+            {
+                if (ignoredParts.Any(x => file.EndsWith(x, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    Console.WriteLine($"Skipped: {file}");
+                    continue;
+                }
+            }
+
             var data = File.ReadAllText(file);
             var locationsResults = LocationsRegex.Match(data);
             var destinationsResults = DestinationsRegex.Match(data);
