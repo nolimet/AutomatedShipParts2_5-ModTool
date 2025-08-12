@@ -17,7 +17,7 @@ PartCrewMinusNone
 {
 	Type = PartCrew
 	Crew = {CrewCount}
-	DefaultPriority = &/PRIORITIES/{DefaultPriority}
+	DefaultPriority = &{DefaultPriority}
 	PrerequisitesBeforeCrewing = [{PrerequisitesBeforeCrewing}, NeedsCrewMinusNone]
 	HighPriorityPrerequisites = [{HighPriorityPrerequisites}]
 	CrewDestinations

@@ -9,11 +9,10 @@ PartCrewMinus{CounterName}
 {
 	Type = PartCrew
 	Crew = {RequiredCrew}
-	DefaultPriority = &/PRIORITIES/{DefaultPriority}
+	DefaultPriority = &{DefaultPriority}
 	PrerequisitesBeforeCrewing = [{PrerequisitesBeforeCrewing}, NeedsCrewMinus{CounterName}]
-	HighPriorityPrerequisites = [BatteryStorage]
+    HighPriorityPrerequisites = [{HighPriorityPrerequisites}]
 	OverridePriorityKey = PartCrewMinusNone
-	HighPriorityPrerequisites = [{HighPriorityPrerequisites}]
 	CrewDestinations
 	[
 		{CrewDestinations}
