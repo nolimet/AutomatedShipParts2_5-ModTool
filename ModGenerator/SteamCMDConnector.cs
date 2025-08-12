@@ -41,7 +41,7 @@ public class SteamCmdConnector
         }
     }
 
-    public List<(string, ulong)> DownloadWorkshopItems(List<ulong> modIds)
+    public List<(string, ulong)> DownloadWorkshopItems(IReadOnlyCollection<ulong> modIds)
     {
         List<(string path, ulong modId)> items = modIds.Select(x => (Path.Combine(AppContext.BaseDirectory, SteamCmdLocalFolder, SteamCmdContentPath, GameId.ToString(), x.ToString()), x)).ToList();
 
