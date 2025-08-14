@@ -46,7 +46,7 @@ public class DataWriter : IDisposable, IAsyncDisposable
             Dictionary<string, string> actionReplacements = new()
             {
                 { "PartName", path.Split('/')[^1].Split('\\')[^1] },
-                { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..]) },
+                { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[2..]) },
                 { "CrewCount", crewData.CrewCount },
                 { "OverrideRulePath", Path.Combine("vanilla", partName) }
             };
@@ -83,7 +83,7 @@ public class DataWriter : IDisposable, IAsyncDisposable
             Dictionary<string, string> actionReplacements = new()
             {
                 { "PartName", partName },
-                { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[2..]) },
+                { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..]) },
                 { "CrewCount", crewData.CrewCount },
                 { "ModID", modId.ToString() },
                 { "OverrideRulePath", Path.Combine(modId.ToString(), partName) }
