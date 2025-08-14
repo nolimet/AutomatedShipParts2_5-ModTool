@@ -3,11 +3,12 @@
 namespace ModGenerator.Config;
 
 [method: JsonConstructor]
+[JsonObject(MemberSerialization.OptIn)]
 public class TargetConfiguration(string? baseGamePath, ulong[]? mods = null, Dictionary<ulong, string[]>? ignoredParts = null)
 {
-    public readonly string BaseGamePath = baseGamePath ?? string.Empty;
-    public readonly ulong[] Mods = mods ?? GetDefaultMods();
-    public readonly Dictionary<ulong, string[]> IgnoredParts = ignoredParts ?? GetDefaultIgnoredParts();
+    [JsonProperty] public readonly string BaseGamePath = baseGamePath ?? string.Empty;
+    [JsonProperty] public readonly ulong[] Mods = mods ?? GetDefaultMods();
+    [JsonProperty] public readonly Dictionary<ulong, string[]> IgnoredParts = ignoredParts ?? GetDefaultIgnoredParts();
 
     private static ulong[] GetDefaultMods() =>
     [

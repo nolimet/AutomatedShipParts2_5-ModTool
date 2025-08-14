@@ -22,6 +22,7 @@ else
 {
     var raw = File.ReadAllText(configPath) ?? throw new InvalidDataException("Json not valid!");
     config = JsonConvert.DeserializeObject<TargetConfiguration>(raw) ?? throw new NullReferenceException("Conversion failed");
+    File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
 }
 
 if (string.IsNullOrWhiteSpace(config.BaseGamePath) || !Directory.Exists(config.BaseGamePath))
