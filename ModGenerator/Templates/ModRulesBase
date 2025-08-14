@@ -1,6 +1,8 @@
-﻿ID = zoe.ai_terminal
+﻿ID = nolimet.ai_terminal
 Name = "AI Core - Automated Ship Parts 2.5"
 CompatibleGameVersions = ["0.30.0"]
+Version = 2.0
+Description="AI core that can operate the part in front of it in place of crew.\n\nOriginally created by <red>Aephiex</red>, later updated by <yellow>Zoe</yellow>. Now maintained by <orange>Nolimet</orange>"
 ModifiesMultiplayer = true
 Logo = "logo.png"
 StringsFolder = "strings"
