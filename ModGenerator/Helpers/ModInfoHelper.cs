@@ -10,7 +10,7 @@ public static class ModInfoHelper
     private static readonly Regex VersionRegex = new(@"Version = (.*)");
     private static readonly Regex GameVersionRegex = new(@"CompatibleGameVersions = \[((?:""?\w+\.\w+\.\w+""?,? ?)+)\]");
 
-    public static ModInfo? GetModInfo(string path)
+    public static ModInfo? GetModInfo(string path, ulong modId)
     {
         var modRulesPath = Path.Combine(path, "mod.rules");
         if (!File.Exists(modRulesPath)) return null;
@@ -45,13 +45,14 @@ public static class ModInfoHelper
         }
 
         var g = new Grid();
-        g.AddColumns(3);
-        g.AddRow("ModName", "Version", "GameVersion");
+        g.AddColumns(4);
+        g.AddRow("ModName", "Version", "GameVersion", "ModId");
         g.AddRow
         (
             nameResult.Success ? nameResult.Groups[1].Value.Trim().Trim('"').RemoveMarkup() : "null",
             versionResult.Success ? versionResult.Groups[1].Value.Trim().Trim('"').RemoveMarkup() : "null",
-            gameVersion ?? "null"
+            gameVersion ?? "null",
+            modId.ToString()
         );
 
         AnsiConsole.Write(g);

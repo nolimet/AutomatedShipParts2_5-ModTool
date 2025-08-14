@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using ModGenerator.Data;
 using Spectre.Console;
 
@@ -29,6 +28,7 @@ public static class PartHelper
         TimeSpan.FromSeconds(2));
 
     private static readonly Regex CrewCountRegex = new(@"Crew ?= ?(\d+)");
+
     // Capture the value on the right side (without the leading '&' if present)
     private static readonly Regex DefaultPriorityRegex = new(@"(?m)^\s*DefaultPriority\s*=\s*&?(\S+)");
     private static readonly Regex CrewingRequirementsRegex = new(@"PrerequisitesBeforeCrewing = \[([\S ]+?)\]");
@@ -52,8 +52,8 @@ public static class PartHelper
     {
         Dictionary<string, CrewData> loadedRules = new();
         Grid issuesGrid = new();
-        issuesGrid.AddColumns(7);
-        issuesGrid.AddRow("Part", "Locations", "Destinations", "CrewCount", "DefaultPriority", "CrewingRequirements", "HighPriorityPrerequisites");
+        issuesGrid.AddColumns(8);
+        issuesGrid.AddRow("Part", "Locations", "Destinations", "CrewCount", "DefaultPriority", "CrewingRequirements", "HighPriorityPrerequisites", "Extracted");
 
         foreach (var file in Directory.GetFiles(path, "*.rules", SearchOption.AllDirectories))
             try
@@ -84,10 +84,12 @@ public static class PartHelper
         var raw = File.ReadAllText(file);
         var data = StripLineComments(raw);
 
+        var crewCountResult = CrewCountRegex.Match(data);
+        if (!crewCountResult.Success) return;
+
         // 2) Run robust, anchored regexes with balanced-bracket core
         var locationsResults = LocationsRegex.Match(data);
         var destinationsResults = DestinationsRegex.Match(data);
-        var crewCountResult = CrewCountRegex.Match(data);
 
         // Scope DefaultPriority search strictly to the PartCrew block to avoid other DefaultPriority fields (e.g., consumers)
         var partCrewBlock = PartCrewBlockRegex.Match(data);
@@ -104,18 +106,15 @@ public static class PartHelper
             var name = locBlock.Groups["name"].Value.Trim();
             var content = locBlock.Groups["content"].Value;
             var locValue = LocationValueRegex.Match(content);
-            if (locValue.Success)
-            {
-                crewLocationCoords[name] = locValue.Groups[1].Value.Trim();
-            }
+            if (locValue.Success) crewLocationCoords[name] = locValue.Groups[1].Value.Trim();
         }
 
         // Resolve CrewDestinations: replace &../../CrewLocationX/Location with the literal coordinates if available
-        string resolvedDestinations = string.Empty;
+        var resolvedDestinations = string.Empty;
         if (destinationsResults.Success)
         {
             var destBlock = destinationsResults.Groups["content"].Value;
-            var lines = destBlock.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            var lines = destBlock.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
 
             var resolved = new List<string>(lines.Length);
             foreach (var rawLine in lines)
@@ -143,7 +142,8 @@ public static class PartHelper
             resolvedDestinations = string.Join(Environment.NewLine, resolved);
         }
 
-        if (locationsResults.Success && destinationsResults.Success && crewCountResult.Success && defaultPriorityResult.Success && crewingRequirementsResult.Success && highPriorityPrerequisitesResult.Success)
+        var extracted = false;
+        if (locationsResults.Success && destinationsResults.Success && crewCountResult.Success && defaultPriorityResult.Success && crewingRequirementsResult.Success)
         {
             loadedRules[file] = new CrewData
             (
@@ -152,10 +152,13 @@ public static class PartHelper
                 crewCount: crewCountResult.Groups[1].Value,
                 defaultPriority: defaultPriorityResult.Groups[1].Value,
                 crewingPrerequisites: crewingRequirementsResult.Groups[1].Value,
-                highPriorityPrerequisites: highPriorityPrerequisitesResult.Groups[1].Value
+                highPriorityPrerequisites: highPriorityPrerequisitesResult.Success ? highPriorityPrerequisitesResult.Groups[1].Value : string.Empty
             );
+
+            extracted = true;
         }
-        else if (crewCountResult.Success)
+
+        if (!(locationsResults.Success && destinationsResults.Success && crewCountResult.Success && defaultPriorityResult.Success && crewingRequirementsResult.Success && highPriorityPrerequisitesResult.Success))
         {
             issuesGrid.AddRow(
                 Path.GetFileNameWithoutExtension(file),
@@ -164,7 +167,8 @@ public static class PartHelper
                 crewCountResult.Groups[1].Value,
                 defaultPriorityResult.Success.ToString(),
                 crewingRequirementsResult.Success.ToString(),
-                highPriorityPrerequisitesResult.Success.ToString()
+                highPriorityPrerequisitesResult.Success.ToString(),
+                extracted.ToString()
             );
         }
     }

@@ -60,7 +60,7 @@ public class DataWriter : IDisposable, IAsyncDisposable
 
     public void WriteModData(string basePath, ulong modId, IReadOnlyList<string>? ignoredParts)
     {
-        if (ModInfoHelper.GetModInfo(basePath) is not { } modInfo)
+        if (ModInfoHelper.GetModInfo(basePath, modId) is not { } modInfo)
         {
             AnsiConsole.MarkupLine($"[red]ModInfo is null![/] Cannot be null! Skipping {modId} at {basePath}");
             return;
@@ -106,8 +106,8 @@ public class DataWriter : IDisposable, IAsyncDisposable
         Dictionary<string, string> partReplacements = new()
         {
             { "CrewCount", crewData.CrewCount },
-            { "CrewDestinations", crewData.Destinations },
-            { "CrewLocations", crewData.Locations },
+            { "CrewDestinations", FormatCrewLocation(crewData.Destinations) },
+            { "CrewLocations", FormatCrewLocation(crewData.Locations) },
             { "DefaultPriority", crewData.DefaultPriority },
             { "PrerequisitesBeforeCrewing", crewData.CrewingPrerequisites },
             { "HighPriorityPrerequisites", crewData.HighPriorityPrerequisites },
@@ -127,6 +127,12 @@ public class DataWriter : IDisposable, IAsyncDisposable
 
         partOverride.Flush();
         partOverride.Close();
+    }
+
+    private string FormatCrewLocation(string input)
+    {
+        var sanitized = input.ReplaceLineEndings().Replace("/t", string.Empty);
+        return string.Join("\n\t\t", sanitized.Split('\n'));
     }
 
     public void Dispose()
