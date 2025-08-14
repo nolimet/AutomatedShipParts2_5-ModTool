@@ -1,0 +1,6 @@
+PartCrewMinus{CounterName}
+{
+	Type = BuffToggle
+	BuffType = AephixAITerminal
+	MinBuffValue = {Counter}
+}

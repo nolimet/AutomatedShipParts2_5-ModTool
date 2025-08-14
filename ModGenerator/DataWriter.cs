@@ -117,7 +117,7 @@ public class DataWriter : IDisposable, IAsyncDisposable
 
         partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateBase, partReplacements));
 
-        for (var i = 1; i <= crewCount; i++)
+        for (var i = 1; i <= crewCount - 1; i++)
         {
             partReplacements["CounterName"] = NumberToText.Convert(i);
             partReplacements["Counter"] = i.ToString();
@@ -125,13 +125,18 @@ public class DataWriter : IDisposable, IAsyncDisposable
             partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateRepeat, partReplacements));
         }
 
+        partReplacements["CounterName"] = NumberToText.Convert(crewCount);
+        partReplacements["Counter"] = crewCount.ToString();
+        partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateFinal, partReplacements));
+        ;
+
         partOverride.Flush();
         partOverride.Close();
     }
 
     private string FormatCrewLocation(string input)
     {
-        var sanitized = input.ReplaceLineEndings().Replace("/t", string.Empty);
+        var sanitized = input.ReplaceLineEndings().Replace("\t", string.Empty);
         return string.Join("\n\t\t", sanitized.Split('\n'));
     }
 
@@ -166,10 +171,6 @@ public class DataWriter : IDisposable, IAsyncDisposable
         {
             await _modRulesWriter.WriteLineAsync("]");
             await _modRulesWriter.FlushAsync().ConfigureAwait(false);
-        }
-        catch
-        {
-            // Swallow or log.
         }
         finally
         {

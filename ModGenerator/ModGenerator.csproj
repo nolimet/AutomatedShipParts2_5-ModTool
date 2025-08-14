@@ -28,5 +28,7 @@
         <EmbeddedResource Include="Templates\PartTemplateRepeat"/>
         <None Remove="Resources\steamcmd.exe"/>
         <EmbeddedResource Include="Resources\steamcmd.exe"/>
+        <None Remove="Templates\PartTemplateFinal"/>
+        <EmbeddedResource Include="Templates\PartTemplateFinal"/>
     </ItemGroup>
 </Project>
