@@ -34,17 +34,19 @@ public static class PartHelper
     private static readonly Regex CrewingRequirementsRegex = new(@"PrerequisitesBeforeCrewing = \[([\S ]+?)\]");
     private static readonly Regex HighPriorityPrerequisitesRegex = new(@"HighPriorityPrerequisites = \[(\S+?)\]");
 
-    // Balanced CrewLocation block: captures the block name and its content
+    // Allow names like "CrewLocation" (no suffix) or "CrewLocation4", etc.
     private static readonly Regex CrewLocationBlockRegex = new(
-        @"(?ms)^\s*(?<name>CrewLocation[^\s:{]+)\s*(?::[^\{]+)?\{(?<content>(?>[^{}]+|\{(?<d>)|\}(?<-d>))*)(?(d)(?!))\}",
+        @"(?ms)^\s*(?<name>CrewLocation[^\s:{]*)\s*(?::[^\{]+)?\{(?<content>(?>[^{}]+|\{(?<d>)|\}(?<-d>))*)(?(d)(?!))\}",
         RegexOptions.Compiled,
         TimeSpan.FromSeconds(2));
 
     // Extract the literal Location = [x, y] line inside a CrewLocation block
     private static readonly Regex LocationValueRegex = new(@"(?m)^\s*Location\s*=\s*(\[[^\]]+\])");
 
-    // Matches a CrewDestination reference like &../../CrewLocation4/Location
-    private static readonly Regex CrewDestinationRefRegex = new(@"^\s*&\.\./\.\./(?<name>[A-Za-z0-9_]+)/Location\s*$");
+    // Accept &../..., &../../..., etc. and capture the terminal name (e.g., CrewLocation or CrewLocation4)
+    private static readonly Regex CrewDestinationRefRegex = new(
+        @"^\s*&(?:\.\./)+(?:)(?<name>[A-Za-z0-9_]+)/Location\s*$",
+        RegexOptions.Compiled);
 
     public static (Dictionary<string, CrewData> parts, Grid report) GetParts(string path, IReadOnlyList<string>? ignoredParts = null)
     {
