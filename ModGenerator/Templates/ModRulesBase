@@ -3,10 +3,6 @@ Name = "AI Core - Automated Ship Parts 2.5"
 CompatibleGameVersions = ["0.30.0"]
 ModifiesMultiplayer = true
 Logo = "logo.png"
-Description =
-	"AI core that can operate the part in front of it in place of crew.\n\n"\
-	"Aephiex did most of this already, I just made it a little better."\n\n"\
-	"Mod remade by Nolimet having created a silly tool to generate most of the silly mod"
 StringsFolder = "strings"
 
 Actions
