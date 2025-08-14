@@ -42,10 +42,7 @@ var connector = new SteamCmdConnector();
 await connector.Init();
 
 var list = connector.DownloadWorkshopItems(config.Mods);
-for (var index = 0; index < list.Count; index++)
-{
-    var (path, modId) = list[index];
+foreach (var (path, modId) in list)
     dataWriter.WriteModData(path, modId, config.IgnoredParts.GetValueOrDefault(modId));
-}
 
 await dataWriter.DisposeAsync();

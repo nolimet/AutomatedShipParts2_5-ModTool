@@ -83,7 +83,7 @@ public class DataWriter : IDisposable, IAsyncDisposable
             Dictionary<string, string> actionReplacements = new()
             {
                 { "PartName", partName },
-                { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..]) },
+                { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[2..]) },
                 { "CrewCount", crewData.CrewCount },
                 { "ModID", modId.ToString() },
                 { "OverrideRulePath", Path.Combine(modId.ToString(), partName) }
@@ -101,7 +101,7 @@ public class DataWriter : IDisposable, IAsyncDisposable
         var crewCount = int.Parse(crewData.CrewCount);
         var partOverride = File.CreateText(Path.Combine(basePath, partName));
         List<string> crewToggleNames = new();
-        for (var i = 0; i < crewCount; i++) crewToggleNames.Add($"PartCrewMinus{NumberToText.Convert(i)}");
+        for (var i = 0; i <= crewCount; i++) crewToggleNames.Add($"PartCrewMinus{NumberToText.Convert(i)}");
 
         Dictionary<string, string> partReplacements = new()
         {
@@ -117,11 +117,11 @@ public class DataWriter : IDisposable, IAsyncDisposable
 
         partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateBase, partReplacements));
 
-        for (var i = 0; i < crewCount; i++)
+        for (var i = 1; i <= crewCount; i++)
         {
-            partReplacements["CounterName"] = NumberToText.Convert(i + 1);
+            partReplacements["CounterName"] = NumberToText.Convert(i);
             partReplacements["Counter"] = i.ToString();
-            partReplacements["RequiredCrew"] = Math.Max(0, crewCount - (i + 1)).ToString();
+            partReplacements["RequiredCrew"] = Math.Max(0, crewCount - i).ToString();
             partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateRepeat, partReplacements));
         }
 

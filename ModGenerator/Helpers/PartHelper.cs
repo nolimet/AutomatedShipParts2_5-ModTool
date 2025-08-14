@@ -22,8 +22,15 @@ public static class PartHelper
         RegexOptions.Compiled,
         TimeSpan.FromSeconds(2));
 
+    // Balanced { ... } block for the PartCrew component
+    private static readonly Regex PartCrewBlockRegex = new(
+        @"(?ms)^\s*PartCrew\b[^{]*\{(?<content>(?>[^{}]+|\{(?<d>)|\}(?<-d>))*)(?(d)(?!))\}",
+        RegexOptions.Compiled,
+        TimeSpan.FromSeconds(2));
+
     private static readonly Regex CrewCountRegex = new(@"Crew ?= ?(\d+)");
-    private static readonly Regex DefaultPriorityRegex = new(@"DefaultPriority = &(\S*)");
+    // Capture the value on the right side (without the leading '&' if present)
+    private static readonly Regex DefaultPriorityRegex = new(@"(?m)^\s*DefaultPriority\s*=\s*&?(\S+)");
     private static readonly Regex CrewingRequirementsRegex = new(@"PrerequisitesBeforeCrewing = \[([\S ]+?)\]");
     private static readonly Regex HighPriorityPrerequisitesRegex = new(@"HighPriorityPrerequisites = \[(\S+?)\]");
 
@@ -67,7 +74,12 @@ public static class PartHelper
         var locationsResults = LocationsRegex.Match(data);
         var destinationsResults = DestinationsRegex.Match(data);
         var crewCountResult = CrewCountRegex.Match(data);
-        var defaultPriorityResult = DefaultPriorityRegex.Match(data);
+
+        // Scope DefaultPriority search strictly to the PartCrew block to avoid other DefaultPriority fields (e.g., consumers)
+        var partCrewBlock = PartCrewBlockRegex.Match(data);
+        var partCrewContent = partCrewBlock.Success ? partCrewBlock.Groups["content"].Value : string.Empty;
+        var defaultPriorityResult = partCrewBlock.Success ? DefaultPriorityRegex.Match(partCrewContent) : Match.Empty;
+
         var crewingRequirementsResult = CrewingRequirementsRegex.Match(data);
         var highPriorityPrerequisitesResult = HighPriorityPrerequisitesRegex.Match(data);
 
