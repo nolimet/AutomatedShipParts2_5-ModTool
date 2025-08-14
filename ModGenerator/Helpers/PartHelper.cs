@@ -34,6 +34,18 @@ public static class PartHelper
     private static readonly Regex CrewingRequirementsRegex = new(@"PrerequisitesBeforeCrewing = \[([\S ]+?)\]");
     private static readonly Regex HighPriorityPrerequisitesRegex = new(@"HighPriorityPrerequisites = \[(\S+?)\]");
 
+    // Balanced CrewLocation block: captures the block name and its content
+    private static readonly Regex CrewLocationBlockRegex = new(
+        @"(?ms)^\s*(?<name>CrewLocation[^\s:{]+)\s*(?::[^\{]+)?\{(?<content>(?>[^{}]+|\{(?<d>)|\}(?<-d>))*)(?(d)(?!))\}",
+        RegexOptions.Compiled,
+        TimeSpan.FromSeconds(2));
+
+    // Extract the literal Location = [x, y] line inside a CrewLocation block
+    private static readonly Regex LocationValueRegex = new(@"(?m)^\s*Location\s*=\s*(\[[^\]]+\])");
+
+    // Matches a CrewDestination reference like &../../CrewLocation4/Location
+    private static readonly Regex CrewDestinationRefRegex = new(@"^\s*&\.\./\.\./(?<name>[A-Za-z0-9_]+)/Location\s*$");
+
     public static (Dictionary<string, CrewData> parts, Grid report) GetParts(string path, IReadOnlyList<string>? ignoredParts = null)
     {
         Dictionary<string, CrewData> loadedRules = new();
@@ -83,12 +95,58 @@ public static class PartHelper
         var crewingRequirementsResult = CrewingRequirementsRegex.Match(data);
         var highPriorityPrerequisitesResult = HighPriorityPrerequisitesRegex.Match(data);
 
+        // Build a map of CrewLocation name -> literal [x, y] Location string
+        var crewLocationCoords = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (Match locBlock in CrewLocationBlockRegex.Matches(data))
+        {
+            var name = locBlock.Groups["name"].Value.Trim();
+            var content = locBlock.Groups["content"].Value;
+            var locValue = LocationValueRegex.Match(content);
+            if (locValue.Success)
+            {
+                crewLocationCoords[name] = locValue.Groups[1].Value.Trim();
+            }
+        }
+
+        // Resolve CrewDestinations: replace &../../CrewLocationX/Location with the literal coordinates if available
+        string resolvedDestinations = string.Empty;
+        if (destinationsResults.Success)
+        {
+            var destBlock = destinationsResults.Groups["content"].Value;
+            var lines = destBlock.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            var resolved = new List<string>(lines.Length);
+            foreach (var rawLine in lines)
+            {
+                var line = rawLine.Trim();
+                if (line.Length == 0)
+                    continue;
+
+                var refMatch = CrewDestinationRefRegex.Match(line);
+                if (refMatch.Success)
+                {
+                    var refName = refMatch.Groups["name"].Value;
+                    if (crewLocationCoords.TryGetValue(refName, out var coords))
+                    {
+                        // Use the literal coordinates from the matching CrewLocation block
+                        resolved.Add(coords);
+                        continue;
+                    }
+                }
+
+                // Fallback: keep the original value as-is
+                resolved.Add(line);
+            }
+
+            resolvedDestinations = string.Join(Environment.NewLine, resolved);
+        }
+
         if (locationsResults.Success && destinationsResults.Success && crewCountResult.Success && defaultPriorityResult.Success && crewingRequirementsResult.Success && highPriorityPrerequisitesResult.Success)
         {
             loadedRules[file] = new CrewData
             (
                 locations: locationsResults.Groups["content"].Value.Trim(),
-                destinations: destinationsResults.Groups["content"].Value.Trim(),
+                destinations: resolvedDestinations.Trim(),
                 crewCount: crewCountResult.Groups[1].Value,
                 defaultPriority: defaultPriorityResult.Groups[1].Value,
                 crewingPrerequisites: crewingRequirementsResult.Groups[1].Value,
