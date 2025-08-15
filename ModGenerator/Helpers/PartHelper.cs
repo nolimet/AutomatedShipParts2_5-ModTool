@@ -6,47 +6,25 @@ namespace ModGenerator.Helpers;
 
 public static class PartHelper
 {
-    // Remove end-of-line comments like // ... or /// ...
-    private static readonly Regex LineCommentRegex = new(@"(?m)//.*$");
+    private static readonly Regex LineCommentRegex = PartHelperRegex.LineCommentRegex();
 
-    // Balanced [ ... ] block after "CrewDestinations" on the same line
-    private static readonly Regex DestinationsRegex = new(
-        @"(?m)^\s*CrewDestinations\b[^\[]*\[(?<content>(?>[^\[\]]+|\[(?<d>)|\](?<-d>))*)(?(d)(?!))\]",
-        RegexOptions.Compiled,
-        TimeSpan.FromSeconds(2));
+    private static readonly Regex DestinationsRegex = PartHelperRegex.DestinationsRegex();
 
-    // Balanced [ ... ] block after "CrewLocations" on the same line
-    private static readonly Regex LocationsRegex = new(
-        @"(?m)^\s*CrewLocations\b[^\[]*\[(?<content>(?>[^\[\]]+|\[(?<d>)|\](?<-d>))*)(?(d)(?!))\]",
-        RegexOptions.Compiled,
-        TimeSpan.FromSeconds(2));
+    private static readonly Regex LocationsRegex = PartHelperRegex.LocationsRegex();
 
-    // Balanced { ... } block for the PartCrew component
-    private static readonly Regex PartCrewBlockRegex = new(
-        @"(?ms)^\s*PartCrew\b[^{]*\{(?<content>(?>[^{}]+|\{(?<d>)|\}(?<-d>))*)(?(d)(?!))\}",
-        RegexOptions.Compiled,
-        TimeSpan.FromSeconds(2));
+    private static readonly Regex PartCrewBlockRegex = PartHelperRegex.PartCrewBlockRegex();
 
-    private static readonly Regex CrewCountRegex = new(@"Crew ?= ?(\d+)");
+    private static readonly Regex CrewCountRegex = PartHelperRegex.CrewCountRegex();
 
-    // Capture the value on the right side (without the leading '&' if present)
-    private static readonly Regex DefaultPriorityRegex = new(@"(?m)^\s*DefaultPriority\s*=\s*&?(\S+)");
-    private static readonly Regex CrewingRequirementsRegex = new(@"PrerequisitesBeforeCrewing = \[([\S ]+?)\]");
-    private static readonly Regex HighPriorityPrerequisitesRegex = new(@"HighPriorityPrerequisites = \[(\S+?)\]");
+    private static readonly Regex DefaultPriorityRegex = PartHelperRegex.DefaultPriorityRegex();
+    private static readonly Regex CrewingRequirementsRegex = PartHelperRegex.CrewingRequirementsRegex();
+    private static readonly Regex HighPriorityPrerequisitesRegex = PartHelperRegex.HighPriorityPrerequisitesRegex();
 
-    // Allow names like "CrewLocation" (no suffix) or "CrewLocation4", etc.
-    private static readonly Regex CrewLocationBlockRegex = new(
-        @"(?ms)^\s*(?<name>CrewLocation[^\s:{]*)\s*(?::[^\{]+)?\{(?<content>(?>[^{}]+|\{(?<d>)|\}(?<-d>))*)(?(d)(?!))\}",
-        RegexOptions.Compiled,
-        TimeSpan.FromSeconds(2));
+    private static readonly Regex CrewLocationBlockRegex = PartHelperRegex.CrewLocationBlockRegex();
 
-    // Extract the literal Location = [x, y] line inside a CrewLocation block
-    private static readonly Regex LocationValueRegex = new(@"(?m)^\s*Location\s*=\s*(\[[^\]]+\])");
+    private static readonly Regex LocationValueRegex = PartHelperRegex.LocationValueRegex();
 
-    // Accept &../..., &../../..., etc. and capture the terminal name (e.g., CrewLocation or CrewLocation4)
-    private static readonly Regex CrewDestinationRefRegex = new(
-        @"^\s*&(?:\.\./)+(?:)(?<name>[A-Za-z0-9_]+)/Location\s*$",
-        RegexOptions.Compiled);
+    private static readonly Regex CrewDestinationRefRegex = PartHelperRegex.CrewDestinationRefRegex();
 
     public static (Dictionary<string, CrewData> parts, Grid report) GetParts(string path, IReadOnlyList<string>? ignoredParts = null)
     {
