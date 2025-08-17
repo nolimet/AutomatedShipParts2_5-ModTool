@@ -92,16 +92,20 @@ public static class PartHelper
         if (destinationsResults.Success)
         {
             var destBlock = destinationsResults.Groups["content"].Value;
-            var lines = destBlock.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
 
-            var resolved = new List<string>(lines.Length);
-            foreach (var rawLine in lines)
+            // Split by commas and/or newlines to support both multi-line and single-line lists
+            var tokens = destBlock
+                .ReplaceLineEndings("\n")
+                .Split(new[] { ',', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            var resolved = new List<string>(tokens.Length);
+            foreach (var rawToken in tokens)
             {
-                var line = rawLine.Trim();
-                if (line.Length == 0)
+                var token = rawToken.Trim();
+                if (token.Length == 0)
                     continue;
 
-                var refMatch = CrewDestinationRefRegex.Match(line);
+                var refMatch = CrewDestinationRefRegex.Match(token);
                 if (refMatch.Success)
                 {
                     var refName = refMatch.Groups["name"].Value;
@@ -114,7 +118,7 @@ public static class PartHelper
                 }
 
                 // Fallback: keep the original value as-is
-                resolved.Add(line);
+                resolved.Add(token);
             }
 
             resolvedDestinations = string.Join(Environment.NewLine, resolved);

@@ -33,12 +33,12 @@ public static partial class PartHelperRegex
     [GeneratedRegex(@"HighPriorityPrerequisites = \[(\S+?)\]", RegexOptions.Compiled, 2000)]
     public static partial Regex HighPriorityPrerequisitesRegex();
 
-    // Allow names like "CrewLocation" (no suffix) or "CrewLocation4", etc.
-    [GeneratedRegex(@"(?ms)^\s*(?<name>CrewLocation[^\s:{]*)\s*(?::[^\{]+)?\{(?<content>(?>[^{}]+|\{(?<d>)|\}(?<-d>))*)(?(d)(?!))\}", RegexOptions.Compiled, 2000)]
+    // Match CrewLocation blocks anywhere (no start-of-line anchor) with balanced { ... }
+    [GeneratedRegex(@"(?s)(?<name>\bCrewLocation[^\s:{]*)\s*(?::[^{]+)?\{(?<content>(?>[^{}]+|\{(?<d>)|\}(?<-d>))*)(?(d)(?!))\}", RegexOptions.Compiled, 2000)]
     public static partial Regex CrewLocationBlockRegex();
 
-    // Extract the literal Location = [x, y] line inside a CrewLocation block
-    [GeneratedRegex(@"(?m)^\s*Location\s*=\s*(\[[^\]]+\])", RegexOptions.Compiled, 2000)]
+    // Extract the Location = [x, y] anywhere inside a CrewLocation block (not line-anchored)
+    [GeneratedRegex(@"Location\s*=\s*(\[[^\]]+\])", RegexOptions.Compiled, 2000)]
     public static partial Regex LocationValueRegex();
 
     // Accept &../..., &../../..., etc. and capture the terminal name (e.g., CrewLocation or CrewLocation4)
