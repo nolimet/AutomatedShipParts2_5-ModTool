@@ -8,7 +8,9 @@ public class DataWriter : IDisposable, IAsyncDisposable
 {
     private bool _disposed;
 
-    private readonly string BasePath = Path.Combine(AppContext.BaseDirectory, "Output");
+    private const string ModFolderName = "mods";
+    private static readonly string BasePath = Path.Combine(AppContext.BaseDirectory, "Output");
+    private static readonly string ModsPath = Path.Combine(BasePath, ModFolderName);
 
     private readonly StreamWriter _modRulesWriter;
 
@@ -66,7 +68,7 @@ public class DataWriter : IDisposable, IAsyncDisposable
             return;
         }
 
-        var modBasePath = Path.Combine(BasePath, modId.ToString());
+        var modBasePath = Path.Combine(ModsPath, modId.ToString());
         Directory.CreateDirectory(modBasePath);
 
         var (parts, report) = PartHelper.GetParts(basePath, ignoredParts);
@@ -86,7 +88,7 @@ public class DataWriter : IDisposable, IAsyncDisposable
                 { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[1..]) },
                 { "CrewCount", crewData.CrewCount },
                 { "ModID", modId.ToString() },
-                { "OverrideRulePath", Path.Combine(modId.ToString(), partName) }
+                { "OverrideRulePath", Path.Combine(ModFolderName, modId.ToString(), partName) }
             };
 
             _modRulesWriter.WriteLine(FillTemplate(TemplateStorage.ActionTemplateModded, actionReplacements));
