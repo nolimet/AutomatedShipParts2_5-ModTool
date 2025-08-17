@@ -96,7 +96,7 @@ public static class PartHelper
             // Split by commas and/or newlines to support both multi-line and single-line lists
             var tokens = destBlock
                 .ReplaceLineEndings("\n")
-                .Split(new[] { ',', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                .Split([',', '\n'], StringSplitOptions.RemoveEmptyEntries);
 
             var resolved = new List<string>(tokens.Length);
             foreach (var rawToken in tokens)
