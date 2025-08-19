@@ -33,10 +33,12 @@ public static class PartHelper
         issuesGrid.AddColumns(8);
         issuesGrid.AddRow("Part", "Locations", "Destinations", "CrewCount", "DefaultPriority", "CrewingRequirements", "HighPriorityPrerequisites", "Extracted");
 
+        var ignoreListRegexs = ignoredParts?.Select(x => new Regex(x, RegexOptions.Compiled | RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(500))).ToArray() ?? [];
+
         foreach (var file in Directory.GetFiles(path, "*.rules", SearchOption.AllDirectories))
             try
             {
-                ExtractPartData(file, ignoredParts, loadedRules, issuesGrid);
+                ExtractPartData(file, ignoreListRegexs, loadedRules, issuesGrid);
             }
             catch (Exception e)
             {
@@ -47,11 +49,11 @@ public static class PartHelper
         return (loadedRules, issuesGrid);
     }
 
-    private static void ExtractPartData(string file, IReadOnlyList<string>? ignoredParts, Dictionary<string, CrewData> loadedRules, Grid issuesGrid)
+    private static void ExtractPartData(string file, IReadOnlyList<Regex> ignoredParts, Dictionary<string, CrewData> loadedRules, Grid issuesGrid)
     {
-        if (ignoredParts is not null)
+        if (ignoredParts.Count > 0)
         {
-            if (ignoredParts.Any(x => file.EndsWith(x, StringComparison.InvariantCultureIgnoreCase)))
+            if (ignoredParts.Any(x => x.IsMatch(file)))
             {
                 Console.WriteLine($"Skipped: {file}");
                 return;

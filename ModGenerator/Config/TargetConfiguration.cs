@@ -25,5 +25,8 @@ public class TargetConfiguration(string? baseGamePath, ulong[]? mods = null, Dic
         3546356734
     ];
 
-    private static Dictionary<ulong, string[]> GetDefaultIgnoredParts() => new();
+    private static Dictionary<ulong, string[]> GetDefaultIgnoredParts() => new()
+    {
+        { 3119349707, [".*base.rules"] }
+    };
 }
