@@ -12,19 +12,18 @@ public class TargetConfiguration(string? baseGamePath, ulong[]? mods = null, Dic
 
     private static ulong[] GetDefaultMods() =>
     [
-        2888343841,
-        2886141879,
-        3052680147,
-        3121346591,
-        3119349707,
-        //3121346591,
-        //3119349707,
-        3539253648,
-        2884747698,
-        3310834040,
-        2995534359,
-        3541853292,
-        3546356734
+        2888343841, //Tiered Parts https://steamcommunity.com/sharedfiles/filedetails/?id=2888343841
+        2886141879, //[DIGI] Modular Missiles https://steamcommunity.com/sharedfiles/filedetails/?id=2886141879
+        3052680147, //巨炮整合最终版0.22（More Deck Cannons for 0.22） https://steamcommunity.com/sharedfiles/filedetails/?id=3052680147
+        //3121346591, //Star Wars: ACD Factions Add-on https://steamcommunity.com/sharedfiles/filedetails/?id=3121346591
+        //3119349707, //Star Wars: A Cosmos Divided Main Mod https://steamcommunity.com/sharedfiles/filedetails/?id=3119349707
+        3539253648, //巨炮0.30测试版(More Deck Cannons 0.30 Beta) https://steamcommunity.com/sharedfiles/filedetails/?id=3539253648
+        2884747698, //Autocannon https://steamcommunity.com/sharedfiles/filedetails/?id=2884747698
+        3310834040, //PreMeltdown. Crewed Power Distribution - ETTM https://steamcommunity.com/sharedfiles/filedetails/?id=3310834040
+        2995534359, //Sunflower Corporation https://steamcommunity.com/sharedfiles/filedetails/?id=2995534359
+        3541853292, //Diagonal Cockpits https://steamcommunity.com/sharedfiles/filedetails/?id=3541853292
+        3546356734, //The Infernum https://steamcommunity.com/sharedfiles/filedetails/?id=3546356734
+        2891248440 //[WIP]Weapon Turrets https://steamcommunity.com/sharedfiles/filedetails/?id=2891248440
     ];
 
     private static Dictionary<ulong, string[]> GetDefaultIgnoredParts() => new()
