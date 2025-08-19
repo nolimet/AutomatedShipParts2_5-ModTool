@@ -17,6 +17,8 @@ public class TargetConfiguration(string? baseGamePath, ulong[]? mods = null, Dic
         3052680147,
         3121346591,
         3119349707,
+        //3121346591,
+        //3119349707,
         3539253648,
         2884747698,
         3310834040,
