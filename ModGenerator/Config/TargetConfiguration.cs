@@ -23,7 +23,9 @@ public class TargetConfiguration(string? baseGamePath, ulong[]? mods = null, Dic
         2995534359, //Sunflower Corporation https://steamcommunity.com/sharedfiles/filedetails/?id=2995534359
         3541853292, //Diagonal Cockpits https://steamcommunity.com/sharedfiles/filedetails/?id=3541853292
         3546356734, //The Infernum https://steamcommunity.com/sharedfiles/filedetails/?id=3546356734
-        2891248440 //[WIP]Weapon Turrets https://steamcommunity.com/sharedfiles/filedetails/?id=2891248440
+        2891248440, //[WIP]Weapon Turrets https://steamcommunity.com/sharedfiles/filedetails/?id=2891248440
+        2899977331, //Ancient Singularity Cannon  https://steamcommunity.com/sharedfiles/filedetails/?id=2897171599
+        2897171599 //Ancient Phazor https://steamcommunity.com/sharedfiles/filedetails/?id=2899977331
     ];
 
     private static Dictionary<ulong, string[]> GetDefaultIgnoredParts() => new()
