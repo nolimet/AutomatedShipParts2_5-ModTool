@@ -4,15 +4,15 @@ namespace ModGenerator.Config;
 
 [method: JsonConstructor]
 [JsonObject(MemberSerialization.OptIn)]
-public class TargetConfiguration(string? baseGamePath, ulong[]? mods = null, Dictionary<ulong, string[]>? ignoredParts = null)
+public class TargetConfiguration(string? baseGamePath, ulong[]? mods = null, ulong[]? manualMods = null, Dictionary<ulong, string[]>? ignoredParts = null)
 {
     [JsonProperty] public readonly string BaseGamePath = baseGamePath ?? string.Empty;
     [JsonProperty] public readonly ulong[] Mods = mods ?? GetDefaultMods();
+    [JsonProperty] public readonly ulong[] ManualMods = manualMods ?? GetDefaultManualMods();
     [JsonProperty] public readonly Dictionary<ulong, string[]> IgnoredParts = ignoredParts ?? GetDefaultIgnoredParts();
 
     private static ulong[] GetDefaultMods() =>
     [
-        2888343841, //Tiered Parts https://steamcommunity.com/sharedfiles/filedetails/?id=2888343841
         2886141879, //[DIGI] Modular Missiles https://steamcommunity.com/sharedfiles/filedetails/?id=2886141879
         3052680147, //巨炮整合最终版0.22（More Deck Cannons for 0.22） https://steamcommunity.com/sharedfiles/filedetails/?id=3052680147
         //3121346591, //Star Wars: ACD Factions Add-on https://steamcommunity.com/sharedfiles/filedetails/?id=3121346591
@@ -24,8 +24,13 @@ public class TargetConfiguration(string? baseGamePath, ulong[]? mods = null, Dic
         3541853292, //Diagonal Cockpits https://steamcommunity.com/sharedfiles/filedetails/?id=3541853292
         3546356734, //The Infernum https://steamcommunity.com/sharedfiles/filedetails/?id=3546356734
         2891248440, //[WIP]Weapon Turrets https://steamcommunity.com/sharedfiles/filedetails/?id=2891248440
-        2899977331, //Ancient Singularity Cannon  https://steamcommunity.com/sharedfiles/filedetails/?id=2897171599
+        2899977331, //Ancient Singularity Cannon https://steamcommunity.com/sharedfiles/filedetails/?id=2897171599
         2897171599, //Ancient Phazor https://steamcommunity.com/sharedfiles/filedetails/?id=2899977331
+    ];
+
+    public static ulong[] GetDefaultManualMods() =>
+    [
+        2888343841, //Tiered Parts https://steamcommunity.com/sharedfiles/filedetails/?id=2888343841 (manual support)
     ];
 
     private static Dictionary<ulong, string[]> GetDefaultIgnoredParts() => new()

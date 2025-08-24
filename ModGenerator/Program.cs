@@ -2,6 +2,7 @@
 
 using ModGenerator;
 using ModGenerator.Config;
+using ModGenerator.Writers;
 using Newtonsoft.Json;
 using AnsiConsole = Spectre.Console.AnsiConsole;
 
@@ -35,15 +36,28 @@ var partsPath = Path.Combine(config.BaseGamePath ?? throw new NullReferenceExcep
 if (!Directory.Exists(partsPath))
     AnsiConsole.WriteLine("NOPE");
 
-var dataWriter = new DataWriter();
-dataWriter.Init();
-dataWriter.WriteVanillaData(config.BaseGamePath);
+List<BaseRulesWriter> usedWriters = [];
+
+var vanillaWriter = new VanillaRulesWriter("vanilla/vanilla.rules");
+usedWriters.Add(vanillaWriter);
+vanillaWriter.Init();
+vanillaWriter.WriteVanillaData(config.BaseGamePath);
 
 var connector = new SteamCmdConnector();
 await connector.Init();
 
 var list = connector.DownloadWorkshopItems(config.Mods);
 foreach (var (path, modId) in list)
-    dataWriter.WriteModData(path, modId, config.IgnoredParts.GetValueOrDefault(modId));
+{
+    var modWriter = new ModdedRulesWriter(path, modId, config.IgnoredParts.GetValueOrDefault(modId), $"mods/{modId}/{modId}.rules");
+    usedWriters.Add(modWriter);
+    modWriter.Init();
+    modWriter.WriteModData();
+}
 
-await dataWriter.DisposeAsync();
+var modRulesWriter = new ModRulesWriter();
+modRulesWriter.Init();
+modRulesWriter.WriteModRules(usedWriters, config.ManualMods);
+await modRulesWriter.DisposeAsync();
+
+foreach (var usedWriter in usedWriters) await usedWriter.DisposeAsync();
