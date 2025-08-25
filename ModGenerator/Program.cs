@@ -39,7 +39,6 @@ if (!Directory.Exists(partsPath))
 List<BaseRulesWriter> usedWriters = [];
 
 var vanillaWriter = new VanillaRulesWriter("vanilla/vanilla.rules");
-usedWriters.Add(vanillaWriter);
 vanillaWriter.Init();
 vanillaWriter.WriteVanillaData(config.BaseGamePath);
 
@@ -57,7 +56,7 @@ foreach (var (path, modId) in list)
 
 var modRulesWriter = new ModRulesWriter();
 modRulesWriter.Init();
-modRulesWriter.WriteModRules(usedWriters, config.ManualMods);
+modRulesWriter.WriteModRules(vanillaWriter, usedWriters, config.ManualMods);
 await modRulesWriter.DisposeAsync();
 
 foreach (var usedWriter in usedWriters) await usedWriter.DisposeAsync();
