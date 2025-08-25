@@ -3,17 +3,28 @@ using ModGenerator.Helpers;
 
 namespace ModGenerator.Writers;
 
-public abstract class BaseRulesWriter(string path) : IDisposable, IAsyncDisposable
+public abstract class BaseRulesWriter : IDisposable, IAsyncDisposable
 {
     protected static readonly string BasePath = Path.Combine(AppContext.BaseDirectory, "Output");
-    protected readonly StreamWriter Writer = new(Path.Combine(BasePath, path));
+    protected readonly StreamWriter Writer;
     private bool _disposed;
+    private readonly string _path;
+
+    protected BaseRulesWriter(string path)
+    {
+        _path = path;
+        var fullPath = Path.Combine(BasePath, path);
+        var fileInfo = new FileInfo(fullPath);
+        if (!fileInfo.Directory!.Exists) fileInfo.Directory.Create();
+
+        Writer = new StreamWriter(Path.Combine(BasePath, path));
+    }
 
     protected virtual bool WriteClosingTag => true;
 
     public abstract void Init();
 
-    public string GetRelativePath() => path;
+    public string GetRelativePath() => _path;
 
     protected void CreateOverride(string basePath, string partName, CrewData crewData)
     {
@@ -25,14 +36,14 @@ public abstract class BaseRulesWriter(string path) : IDisposable, IAsyncDisposab
 
         Dictionary<string, string> partReplacements = new()
         {
-            { "CrewCount", crewData.CrewCount },
-            { "CrewDestinations", FormatCrewLocation(crewData.Destinations) },
-            { "CrewLocations", FormatCrewLocation(crewData.Locations) },
-            { "DefaultPriority", crewData.DefaultPriority },
-            { "PrerequisitesBeforeCrewing", crewData.CrewingPrerequisites },
-            { "HighPriorityPrerequisites", crewData.HighPriorityPrerequisites },
-            { "TogglesMinusNone", string.Join(", ", crewToggleNames[1..]) },
-            { "CrewToggles", string.Join(", ", crewToggleNames) }
+            {"CrewCount", crewData.CrewCount},
+            {"CrewDestinations", FormatCrewLocation(crewData.Destinations)},
+            {"CrewLocations", FormatCrewLocation(crewData.Locations)},
+            {"DefaultPriority", crewData.DefaultPriority},
+            {"PrerequisitesBeforeCrewing", crewData.CrewingPrerequisites},
+            {"HighPriorityPrerequisites", crewData.HighPriorityPrerequisites},
+            {"TogglesMinusNone", string.Join(", ", crewToggleNames[1..])},
+            {"CrewToggles", string.Join(", ", crewToggleNames)}
         };
 
         partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateBase, partReplacements));
