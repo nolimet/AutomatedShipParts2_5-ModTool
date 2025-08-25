@@ -9,9 +9,9 @@ public class VanillaRulesWriter(string path) : BaseRulesWriter(path)
     {
         Writer.Write(FillTemplate(TemplateStorage.ModRuleFileBase, new Dictionary<string, string>
         {
-            { "ModId", "-1" },
-            { "ModName", "Vanilla" },
-            { "ModVersion", "" }
+            {"ModId", ""},
+            {"ModName", "Cosmoteer Base"},
+            {"ModVersion", ""}
         }));
     }
 
@@ -29,10 +29,10 @@ public class VanillaRulesWriter(string path) : BaseRulesWriter(path)
             var partName = path.Split('/')[^1].Split('\\')[^1];
             Dictionary<string, string> actionReplacements = new()
             {
-                { "PartName", path.Split('/')[^1].Split('\\')[^1] },
-                { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[2..]) },
-                { "CrewCount", crewData.CrewCount },
-                { "OverrideRulePath", partName }
+                {"PartName", path.Split('/')[^1].Split('\\')[^1]},
+                {"PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[2..])},
+                {"CrewCount", crewData.CrewCount},
+                {"OverrideRulePath", partName}
             };
             Writer.WriteLine(FillTemplate(TemplateStorage.ActionTemplateVanilla, actionReplacements));
 
