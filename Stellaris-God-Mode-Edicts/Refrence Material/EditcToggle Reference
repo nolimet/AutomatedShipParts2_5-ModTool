@@ -1,0 +1,58 @@
+## Source: SteamLibrary\steamapps\common\Stellaris\common\edicts\00_edicts.txt
+
+@Edict1Cost = 10
+@Edict2Cost = 20
+@Edict3Cost = 30
+@EdictSpecialCost = 1
+
+@EdictPerpetual = -1
+
+#################
+# Toggle Edicts
+#################
+
+evacuation_protocols = {
+	length = @EdictPerpetual
+	icon = "GFX_edict_type_policy"
+
+	resources = {
+		category = edicts
+		cost = {
+			unity = @Edict1Cost
+			multiplier = value:edict_size_effect
+		}
+		upkeep = {
+			unity = @Edict1Cost
+			multiplier = value:edict_size_effect
+		}
+	}
+
+	modifier = {
+		planet_colony_development_speed_mult = 1.00
+		pop_resettlement_cost_mult = -0.50
+	}
+
+	potential = {
+		has_origin = origin_doomsday
+		any_owned_planet = {
+			is_doomsday_planet = yes
+		}
+	}
+
+	allow = {
+		custom_tooltip = {
+			fail_text = "requires_doomsday_colony"
+			any_planet_within_border = {
+				OR = {
+					is_colonizable = yes
+					is_colony = yes
+				}
+				is_doomsday_planet = no
+			}
+		}
+	}
+
+	ai_weight = {
+		weight = 500
+	}
+}
