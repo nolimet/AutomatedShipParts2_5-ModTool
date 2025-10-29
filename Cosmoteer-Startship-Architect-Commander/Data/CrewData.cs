@@ -1,4 +1,4 @@
-﻿namespace ModGenerator.Data;
+﻿namespace Cosmoteer.Data;
 
 public readonly struct CrewData(string locations, string destinations, string crewCount, string defaultPriority, string crewingPrerequisites, string highPriorityPrerequisites)
 {

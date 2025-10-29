@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace ModGenerator.Helpers;
+namespace Cosmoteer.Helpers;
 
 public static partial class PartHelperRegex
 {

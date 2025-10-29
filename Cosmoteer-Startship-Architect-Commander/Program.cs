@@ -1,8 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using ModGenerator;
-using ModGenerator.Config;
-using ModGenerator.Writers;
+using Cosmoteer;
+using Cosmoteer.Config;
+using Cosmoteer.Writers;
 using Newtonsoft.Json;
 using AnsiConsole = Spectre.Console.AnsiConsole;
 

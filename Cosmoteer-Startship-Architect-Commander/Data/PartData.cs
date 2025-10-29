@@ -1,4 +1,4 @@
-﻿namespace ModGenerator.Data;
+﻿namespace Cosmoteer.Data;
 
 public readonly struct PartData(CrewData crewData, ModInfo modInfo)
 {

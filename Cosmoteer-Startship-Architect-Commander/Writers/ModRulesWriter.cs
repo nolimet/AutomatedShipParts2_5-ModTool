@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace ModGenerator.Writers;
+namespace Cosmoteer.Writers;
 
 public class ModRulesWriter() : BaseRulesWriter("mod.rules")
 {
@@ -10,7 +10,7 @@ public class ModRulesWriter() : BaseRulesWriter("mod.rules")
 
     public void WriteModRules(in BaseRulesWriter vanilla, in IReadOnlyList<BaseRulesWriter> overrideWriters, in IReadOnlyList<ulong> manualMods)
     {
-        StringBuilder bldr = new();   
+        StringBuilder bldr = new();
         bldr.AppendLine($"&<{vanilla.GetRelativePath()}>/Actions,");
 
         foreach (var manualMod in manualMods)
@@ -19,6 +19,6 @@ public class ModRulesWriter() : BaseRulesWriter("mod.rules")
         foreach (var overrideWriter in overrideWriters)
             bldr.AppendLine($"&<{overrideWriter.GetRelativePath()}>/Actions,");
 
-        Writer.Write(FillTemplate(TemplateStorage.ModRulesBase, new Dictionary<string, string> {{"Modules", bldr.ToString()}}));
+        Writer.Write(FillTemplate(TemplateStorage.ModRulesBase, new Dictionary<string, string> { { "Modules", bldr.ToString() } }));
     }
 }

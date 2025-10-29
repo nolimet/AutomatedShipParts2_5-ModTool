@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using ModGenerator.Helpers;
+using Cosmoteer.Helpers;
 using Spectre.Console;
 
-namespace ModGenerator;
+namespace Cosmoteer;
 
 public class SteamCmdConnector
 {

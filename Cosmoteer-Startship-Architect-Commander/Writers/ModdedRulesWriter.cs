@@ -1,8 +1,8 @@
-﻿using ModGenerator.Data;
-using ModGenerator.Helpers;
+﻿using Cosmoteer.Data;
+using Cosmoteer.Helpers;
 using Spectre.Console;
 
-namespace ModGenerator.Writers;
+namespace Cosmoteer.Writers;
 
 public class ModdedRulesWriter(string modPath, ulong modId, IReadOnlyList<string>? ignoredParts, string path) : BaseRulesWriter(path)
 {

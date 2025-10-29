@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace ModGenerator.Config;
+namespace Cosmoteer.Config;
 
 [method: JsonConstructor]
 [JsonObject(MemberSerialization.OptIn)]

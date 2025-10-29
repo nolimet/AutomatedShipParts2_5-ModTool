@@ -1,7 +1,7 @@
-﻿using ModGenerator.Data;
-using ModGenerator.Helpers;
+﻿using Cosmoteer.Data;
+using Cosmoteer.Helpers;
 
-namespace ModGenerator.Writers;
+namespace Cosmoteer.Writers;
 
 public abstract class BaseRulesWriter : IDisposable, IAsyncDisposable
 {
@@ -36,14 +36,14 @@ public abstract class BaseRulesWriter : IDisposable, IAsyncDisposable
 
         Dictionary<string, string> partReplacements = new()
         {
-            {"CrewCount", crewData.CrewCount},
-            {"CrewDestinations", FormatCrewLocation(crewData.Destinations)},
-            {"CrewLocations", FormatCrewLocation(crewData.Locations)},
-            {"DefaultPriority", crewData.DefaultPriority},
-            {"PrerequisitesBeforeCrewing", crewData.CrewingPrerequisites},
-            {"HighPriorityPrerequisites", crewData.HighPriorityPrerequisites},
-            {"TogglesMinusNone", string.Join(", ", crewToggleNames[1..])},
-            {"CrewToggles", string.Join(", ", crewToggleNames)}
+            { "CrewCount", crewData.CrewCount },
+            { "CrewDestinations", FormatCrewLocation(crewData.Destinations) },
+            { "CrewLocations", FormatCrewLocation(crewData.Locations) },
+            { "DefaultPriority", crewData.DefaultPriority },
+            { "PrerequisitesBeforeCrewing", crewData.CrewingPrerequisites },
+            { "HighPriorityPrerequisites", crewData.HighPriorityPrerequisites },
+            { "TogglesMinusNone", string.Join(", ", crewToggleNames[1..]) },
+            { "CrewToggles", string.Join(", ", crewToggleNames) }
         };
 
         partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateBase, partReplacements));

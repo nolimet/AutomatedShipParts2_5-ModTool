@@ -1,6 +1,6 @@
-﻿using ModGenerator.Helpers;
+﻿using Cosmoteer.Helpers;
 
-namespace ModGenerator;
+namespace Cosmoteer;
 
 public static class TemplateStorage
 {

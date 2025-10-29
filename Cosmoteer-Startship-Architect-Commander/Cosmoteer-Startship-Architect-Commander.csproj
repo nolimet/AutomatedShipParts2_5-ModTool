@@ -6,7 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
-        <RootNamespace>ModGenerator</RootNamespace>
+        <RootNamespace>Cosmoteer</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

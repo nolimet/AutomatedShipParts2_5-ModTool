@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
-using ModGenerator.Data;
+using Cosmoteer.Data;
 using Spectre.Console;
 
-namespace ModGenerator.Helpers;
+namespace Cosmoteer.Helpers;
 
 public static class PartHelper
 {
