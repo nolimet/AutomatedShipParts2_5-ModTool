@@ -19,8 +19,8 @@ public class VanillaRulesWriter(string path) : BaseRulesWriter(path)
     {
         var vanillaBasePAth = Path.Combine(BasePath, "vanilla");
         Directory.CreateDirectory(vanillaBasePAth);
-        var (parts, report) = PartHelper.GetParts(basePath);
-        AnsiConsole.WriteLine($"Found {parts.Count} vanilla parts");
+        var (parts, report, issueCount) = PartHelper.GetParts(basePath);
+        AnsiConsole.WriteLine($"Found {parts.Count} vanilla parts of which {issueCount} has issues");
         if (report.Rows.Count > 1)
             AnsiConsole.Write(report);
 
@@ -35,7 +35,7 @@ public class VanillaRulesWriter(string path) : BaseRulesWriter(path)
                 { "OverrideRulePath", partName }
             };
             Writer.WriteLine(FillTemplate(TemplateStorage.ActionTemplateVanilla, actionReplacements));
-
+            
             CreateOverride(vanillaBasePAth, partName, crewData);
         }
 

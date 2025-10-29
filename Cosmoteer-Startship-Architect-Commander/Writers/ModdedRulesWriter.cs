@@ -36,8 +36,8 @@ public class ModdedRulesWriter(string modPath, ulong modId, IReadOnlyList<string
         var modBasePath = Path.Combine(ModsPath, modId.ToString());
         Directory.CreateDirectory(modBasePath);
 
-        var (parts, report) = PartHelper.GetParts(modPath, ignoredParts);
-        Console.WriteLine($"Found {parts.Count} valid parts");
+        var (parts, report, issueCount) = PartHelper.GetParts(modPath, ignoredParts);
+        Console.WriteLine($"Found {parts.Count} valid parts of which {issueCount} has issues");
         if (report.Rows.Count > 1)
             AnsiConsole.Write(report);
 
