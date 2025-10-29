@@ -4,13 +4,13 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Stelaris</RootNamespace>
+        <RootNamespace>GodModeEdicts</RootNamespace>
         <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Data\" />
-      <Folder Include="Interfaces\" />
+        <Folder Include="Data\"/>
+        <Folder Include="Interfaces\"/>
     </ItemGroup>
 
 </Project>

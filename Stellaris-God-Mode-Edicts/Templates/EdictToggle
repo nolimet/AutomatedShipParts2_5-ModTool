@@ -1,0 +1,43 @@
+$## {{edictName}}
+$godEdict_{{edictName}}_on ={
+	length = 0
+	resources = {
+		category = edicts
+		cost = { influence = 0 }
+	}
+
+	potential = {
+			NOT = { has_country_flag = flag_godEdict_{{edictName}}_on }
+		}
+
+	effect =
+		{
+			country_event = { id = godEdict_toggle.{{idOn}} days = 0}
+		}
+
+	allow = {}
+
+	ai_weight = {
+			weight = 0
+		}
+}
+
+$godEdict_{{edictName}}_off ={
+	length = 0
+
+	resources = {
+		category = edicts
+		cost = { influence = 0 }
+	}
+	potential = {
+			has_country_flag = flag_godEdict_{{edictName}}_on
+	}
+
+	effect = {
+		country_event = { id = godEdict_toggle.{{idOff}} days = 0}
+	}
+
+	allow = {}
+
+	ai_weight = { weight = 0 }
+}

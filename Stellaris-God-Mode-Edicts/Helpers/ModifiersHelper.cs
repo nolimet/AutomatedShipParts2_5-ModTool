@@ -1,14 +1,8 @@
-﻿using GodEdictGen.Generators;
-using System.Collections.Generic;
-using System.Linq;
+﻿using GodModeEdicts.Generators;
 
-namespace GodEdictGen.Helpers
+namespace GodModeEdicts.Helpers;
+
+public static class ModifiersHelper
 {
-    public static class ModifiersHelper
-    {
-        public static IReadOnlyList<ModifierGenerator> AddSet(this IReadOnlyList<ModifierGenerator> orignalList, string modifierFormat, double modifierValue, params string[] modifierNames)
-        {
-            return orignalList.Concat(ModifierGenerator.GenerateSet(modifierFormat, modifierValue, modifierNames)).ToArray();
-        }
-    }
+    public static IReadOnlyList<ModifierGenerator> AddSet(this IReadOnlyList<ModifierGenerator> orignalList, string modifierFormat, double modifierValue, params string[] modifierNames) => orignalList.Concat(ModifierGenerator.GenerateSet(modifierFormat, modifierValue, modifierNames)).ToArray();
 }
