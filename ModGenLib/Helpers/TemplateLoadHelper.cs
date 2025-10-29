@@ -1,19 +1,19 @@
 ﻿using System.Reflection;
 
-namespace Cosmoteer.Helpers;
+namespace ModGenLib.Helpers;
 
 public static class TemplateLoadHelper
 {
-    public static string LoadTemplate(string name)
+    public static string LoadTemplate(string name, Assembly? asm = null)
     {
-        using var stream = GetResourceStream(name);
+        using var stream = GetResourceStream(name, asm);
         using var reader = new StreamReader(stream!);
         return reader.ReadToEnd();
     }
 
-    public static Stream? GetResourceStream(string name)
+    public static Stream? GetResourceStream(string name, Assembly? asm = null)
     {
-        var asm = Assembly.GetExecutingAssembly();
+        asm ??= Assembly.GetExecutingAssembly();
         var fullName = asm.GetManifestResourceNames().FirstOrDefault(x => x.EndsWith(name));
         if (fullName is null)
         {

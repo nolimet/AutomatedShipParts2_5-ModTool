@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Cosmoteer.Helpers;
+namespace ModGenLib.Helpers;
 
 public static class DpapiEncryption
 {

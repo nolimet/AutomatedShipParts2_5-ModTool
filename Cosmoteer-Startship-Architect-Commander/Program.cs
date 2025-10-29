@@ -1,8 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using Cosmoteer;
 using Cosmoteer.Config;
 using Cosmoteer.Writers;
+using ModGenLib.Connectors;
 using Newtonsoft.Json;
 using AnsiConsole = Spectre.Console.AnsiConsole;
 
@@ -42,7 +42,7 @@ var vanillaWriter = new VanillaRulesWriter("vanilla/vanilla.rules");
 vanillaWriter.Init();
 vanillaWriter.WriteVanillaData(config.BaseGamePath);
 
-var connector = new SteamCmdConnector();
+var connector = new SteamCmdConnector(799600);
 await connector.Init();
 
 var list = connector.DownloadWorkshopItems(config.Mods);

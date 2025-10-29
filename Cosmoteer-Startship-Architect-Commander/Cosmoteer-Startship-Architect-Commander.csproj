@@ -2,36 +2,31 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net8.0-windows</TargetFramework>
+        <TargetFramework>net9.0-windows</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
         <RootNamespace>Cosmoteer</RootNamespace>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2025.2.0"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageReference Include="Spectre.Console" Version="0.50.0"/>
-        <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.8"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.2"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
+        <PackageReference Include="Spectre.Console" Version="0.53.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Templates\ActionTemplateModded"/>
         <EmbeddedResource Include="Templates\ActionTemplateModded"/>
-        <None Remove="Templates\ActionTemplateVanilla"/>
         <EmbeddedResource Include="Templates\ActionTemplateVanilla"/>
-        <None Remove="Templates\ModRulesBase"/>
         <EmbeddedResource Include="Templates\ModRulesBase"/>
-        <None Remove="Templates\PartTemplateBase"/>
         <EmbeddedResource Include="Templates\PartTemplateBase"/>
-        <None Remove="Templates\PartTemplateRepeat"/>
         <EmbeddedResource Include="Templates\PartTemplateRepeat"/>
-        <None Remove="Resources\steamcmd.exe"/>
-        <EmbeddedResource Include="Resources\steamcmd.exe"/>
-        <None Remove="Templates\PartTemplateFinal"/>
         <EmbeddedResource Include="Templates\PartTemplateFinal"/>
-        <None Remove="Templates\ModRuleFileBase"/>
         <EmbeddedResource Include="Templates\ModRuleFileBase"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ModGenLib\ModGenLib.csproj"/>
     </ItemGroup>
 </Project>

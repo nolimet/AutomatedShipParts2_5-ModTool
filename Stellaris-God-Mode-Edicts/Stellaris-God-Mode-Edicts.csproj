@@ -1,16 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net9.0-windows</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>GodModeEdicts</RootNamespace>
         <OutputType>Exe</OutputType>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Data\"/>
-        <Folder Include="Interfaces\"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.2"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
+        <PackageReference Include="Spectre.Console" Version="0.53.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ModGenLib\ModGenLib.csproj"/>
     </ItemGroup>
 
 </Project>
