@@ -31,7 +31,7 @@ public class TargetConfiguration(string? baseGamePath, ulong[]? mods = null, ulo
 
     public static ulong[] GetDefaultManualMods() =>
     [
-        2888343841, //Tiered Parts https://steamcommunity.com/sharedfiles/filedetails/?id=2888343841 (manual support)
+        //2888343841, //Tiered Parts https://steamcommunity.com/sharedfiles/filedetails/?id=2888343841 (manual support)
     ];
 
     private static Dictionary<ulong, string[]> GetDefaultIgnoredParts() => new()

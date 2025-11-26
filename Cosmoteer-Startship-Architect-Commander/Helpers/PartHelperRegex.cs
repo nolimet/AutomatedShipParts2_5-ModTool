@@ -44,4 +44,17 @@ public static partial class PartHelperRegex
     // Accept &../..., &../../..., etc. and capture the terminal name (e.g., CrewLocation or CrewLocation4)
     [GeneratedRegex(@"^\s*&(?:\.\./)+(?:)(?<name>[A-Za-z0-9_]+)/Location\s*$", RegexOptions.Compiled, 2000)]
     public static partial Regex CrewDestinationRefRegex();
+
+    // NEW: Match a single CrewDestinations item:
+    // - either a balanced [x, y] pair
+    // - or a reference like &../../CrewLocation4/Location
+    [GeneratedRegex(@"(?xms)
+        \[
+            (?>[^\[\]]+|\[(?<d>)|\](?<-d>))*
+            (?(d)(?!))
+        \]
+        |
+        &(?:\.\./)+(?:)(?<name>[A-Za-z0-9_]+)/Location
+    ", RegexOptions.Compiled, 2000)]
+    public static partial Regex DestinationItemRegex();
 }

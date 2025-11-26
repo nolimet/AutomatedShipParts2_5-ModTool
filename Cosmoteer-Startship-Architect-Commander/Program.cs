@@ -60,3 +60,4 @@ modRulesWriter.WriteModRules(vanillaWriter, usedWriters, config.ManualMods);
 await modRulesWriter.DisposeAsync();
 
 foreach (var usedWriter in usedWriters) await usedWriter.DisposeAsync();
+await vanillaWriter.DisposeAsync();

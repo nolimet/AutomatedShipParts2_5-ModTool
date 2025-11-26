@@ -26,19 +26,23 @@ public static class PartHelper
 
     private static readonly Regex CrewDestinationRefRegex = PartHelperRegex.CrewDestinationRefRegex();
 
-    public static (Dictionary<string, CrewData> parts, Grid report) GetParts(string path, IReadOnlyList<string>? ignoredParts = null)
+    private static readonly Regex DestinationItemRegex = PartHelperRegex.DestinationItemRegex();
+
+    public static (Dictionary<string, CrewData> parts, Grid report, uint issueCount) GetParts(string path, IReadOnlyList<string>? ignoredParts = null)
     {
         Dictionary<string, CrewData> loadedRules = new();
         Grid issuesGrid = new();
-        issuesGrid.AddColumns(8);
-        issuesGrid.AddRow("Part", "Locations", "Destinations", "CrewCount", "DefaultPriority", "CrewingRequirements", "HighPriorityPrerequisites", "Extracted");
+        uint issueCount = 0;
+        issuesGrid.AddColumns(9);
+        issuesGrid.AddRow("Part", "Locations", "Destinations", "CrewCount", "DefaultPriority", "CrewingRequirements", "HighPriorityPrerequisites", "Extracted", "NoCrew");
 
         var ignoreListRegexs = ignoredParts?.Select(x => new Regex(x, RegexOptions.Compiled | RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(500))).ToArray() ?? [];
 
         foreach (var file in Directory.GetFiles(path, "*.rules", SearchOption.AllDirectories))
             try
             {
-                ExtractPartData(file, ignoreListRegexs, loadedRules, issuesGrid);
+                ExtractPartData(file, ignoreListRegexs, loadedRules, issuesGrid, ref issueCount);
+                ;
             }
             catch (Exception e)
             {
@@ -46,10 +50,10 @@ public static class PartHelper
                 throw;
             }
 
-        return (loadedRules, issuesGrid);
+        return (loadedRules, issuesGrid, issueCount);
     }
 
-    private static void ExtractPartData(string file, IReadOnlyList<Regex> ignoredParts, Dictionary<string, CrewData> loadedRules, Grid issuesGrid)
+    private static void ExtractPartData(string file, IReadOnlyList<Regex> ignoredParts, Dictionary<string, CrewData> loadedRules, Grid issuesGrid, ref uint issueCount)
     {
         if (ignoredParts.Count > 0)
         {
@@ -89,23 +93,18 @@ public static class PartHelper
             if (locValue.Success) crewLocationCoords[name] = locValue.Groups[1].Value.Trim();
         }
 
-        // Resolve CrewDestinations: replace &../../CrewLocationX/Location with the literal coordinates if available
+        // Resolve CrewDestinations: parse items as either [x, y] or &../../.../Location
         var resolvedDestinations = string.Empty;
         if (destinationsResults.Success)
         {
             var destBlock = destinationsResults.Groups["content"].Value;
 
-            // Split by commas and/or newlines to support both multi-line and single-line lists
-            var tokens = destBlock
-                .ReplaceLineEndings("\n")
-                .Split([',', '\n'], StringSplitOptions.RemoveEmptyEntries);
-
-            var resolved = new List<string>(tokens.Length);
-            foreach (var rawToken in tokens)
+            var matches = DestinationItemRegex.Matches(destBlock);
+            var resolved = new List<string>(matches.Count);
+            foreach (Match m in matches)
             {
-                var token = rawToken.Trim();
-                if (token.Length == 0)
-                    continue;
+                var token = m.Value.Trim();
+                if (token.Length == 0) continue;
 
                 var refMatch = CrewDestinationRefRegex.Match(token);
                 if (refMatch.Success)
@@ -119,15 +118,16 @@ public static class PartHelper
                     }
                 }
 
-                // Fallback: keep the original value as-is
+                // Fallback: keep the original value as-is (covers [x, y] literals)
                 resolved.Add(token);
             }
 
             resolvedDestinations = string.Join(Environment.NewLine, resolved);
         }
 
+        var crewCount = int.TryParse(crewCountResult.Groups[1].Value, out var crewCountResultInt) ? crewCountResultInt : -1;
         var extracted = false;
-        if (locationsResults.Success && destinationsResults.Success && crewCountResult.Success && defaultPriorityResult.Success && crewingRequirementsResult.Success)
+        if (locationsResults.Success && destinationsResults.Success && crewCountResult.Success && defaultPriorityResult.Success && crewingRequirementsResult.Success && crewCount > 0)
         {
             loadedRules[file] = new CrewData
             (
@@ -142,19 +142,20 @@ public static class PartHelper
             extracted = true;
         }
 
-        if (!(locationsResults.Success && destinationsResults.Success && crewCountResult.Success && defaultPriorityResult.Success && crewingRequirementsResult.Success && highPriorityPrerequisitesResult.Success))
-        {
-            issuesGrid.AddRow(
-                Path.GetFileNameWithoutExtension(file),
-                locationsResults.Success.ToString(),
-                destinationsResults.Success.ToString(),
-                crewCountResult.Groups[1].Value,
-                defaultPriorityResult.Success.ToString(),
-                crewingRequirementsResult.Success.ToString(),
-                highPriorityPrerequisitesResult.Success.ToString(),
-                extracted.ToString()
-            );
-        }
+        if (locationsResults.Success && destinationsResults.Success && crewCountResult.Success && defaultPriorityResult.Success && crewingRequirementsResult.Success && highPriorityPrerequisitesResult.Success && crewCount > 0) return;
+
+        issueCount++;
+        issuesGrid.AddRow(
+            Path.GetFileNameWithoutExtension(file),
+            locationsResults.Success.ToString(),
+            destinationsResults.Success.ToString(),
+            crewCountResult.Groups[1].Value,
+            defaultPriorityResult.Success.ToString(),
+            crewingRequirementsResult.Success.ToString(),
+            highPriorityPrerequisitesResult.Success.ToString(),
+            extracted.ToString(),
+            crewCount > 0 ? "false" : "true"
+        );
     }
 
     private static string StripLineComments(string s) => LineCommentRegex.Replace(s, "");
