@@ -14,12 +14,12 @@ public class Edicts
                 new("science_ship_survey_speed", 5),
                 new("ship_anomaly_generation_chance_mult", 2),
                 new("planet_building_cost_mult", 5),
-                new("planet_building_build_speed_mult", 5),
+                new("planet_building_build_speed_mult", 20),
                 new("pop_happiness", 5),
                 new("country_ship_upgrade_cost_mult", -.99),
                 new("leader_skill_levels", 5),
                 new("species_leader_exp_gain", 5),
-                new("leader_age", 90000),
+                new("leader_age", 2000),
                 new("country_base_influence_produces_add", 50),
                 new("country_naval_cap_mult", 10),
                 new("planet_pops_consumer_goods_upkeep_mult", -0.95)
@@ -37,27 +37,61 @@ public class Edicts
             (
                 modifierFormat: "ship_{0}_mult",
                 modifierValue: .35,
-                modifierNames: new string[]
-                {
+                modifierNames:
+                [
                     "fire_rate",
                     "speed",
                     "evasion"
-                }
+                ]
+            )
+        ),
+        new(
+            name: "Demi_God_Node",
+            modifiers: new ModifierGenerator[]
+            {
+                new("science_ship_survey_speed", 2),
+                new("ship_anomaly_generation_chance_mult", 2),
+                new("planet_building_build_speed_mult", 3),
+                new("species_leader_exp_gain", 3),
+                new("leader_age", 500),
+                new("country_base_influence_produces_add", 10),
+                new("country_naval_cap_mult", 2),
+                new("planet_pops_consumer_goods_upkeep_mult", -0.95)
+            }.AddSet
+            (
+                modifierFormat: "country_{0}_produces_mult",
+                modifierValue: 2,
+                modifierNames: ModifierNamesData.GeneralResources
+            ).AddSet
+            (
+                modifierFormat: "country_{0}_tech_research_speed",
+                modifierValue: 2,
+                modifierNames: ModifierNamesData.ScienceResources
+            ).AddSet
+            (
+                modifierFormat: "ship_{0}_mult",
+                modifierValue: .15,
+                modifierNames:
+                [
+                    "fire_rate",
+                    "speed",
+                    "evasion"
+                ]
             )
         ),
         new(
             name: "Leader_Age",
-            modifiers: new ModifierGenerator[]
-            {
-                new("leader_age", 10000)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("leader_age", 2000)
+            ]
         ),
         new(
             name: "Research_Speedup",
-            modifiers: new ModifierGenerator[]
-            {
-                new("all_technology_research_speed", 20)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("all_technology_research_speed", 20)
+            ]
         ),
         new(
             name: "Research_Income",
@@ -73,17 +107,17 @@ public class Edicts
         ),
         new(
             name: "Research_Alts_Add_5",
-            modifiers: new ModifierGenerator[]
-            {
-                new("num_tech_alternatives_add", 5)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("num_tech_alternatives_add", 5)
+            ]
         ),
         new(
             name: "Research_Alts_Add_5_More",
-            modifiers: new ModifierGenerator[]
-            {
-                new("num_tech_alternatives_add", 5)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("num_tech_alternatives_add", 5)
+            ]
         ),
         new(
             name: "Resource_Incomeboost",
@@ -105,78 +139,78 @@ public class Edicts
         ),
         new(
             name: "Pop_happiness_boost",
-            modifiers: new ModifierGenerator[]
-            {
-                new("pop_happiness", 40),
-                new("planet_stability_add", 200),
-                new("pop_amenities_usage_mult", -.99)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("pop_happiness", 40),
+                new ModifierGenerator("planet_stability_add", 200),
+                new ModifierGenerator("pop_amenities_usage_mult", -.99)
+            ]
         ),
         new(
             name: "Navy_boost",
-            modifiers: new ModifierGenerator[]
-            {
-                new("country_ship_upgrade_cost_mult", -5),
-                new("country_naval_cap_mult", 20),
-                new("country_command_limit_add", 400)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("country_ship_upgrade_cost_mult", -5),
+                new ModifierGenerator("country_naval_cap_mult", 20),
+                new ModifierGenerator("country_command_limit_add", 400)
+            ]
         ),
         new(
             name: "Influence_Boost",
-            modifiers: new ModifierGenerator[]
-            {
-                new("country_base_influence_produces_add", 1000),
-                new("country_resource_max_influence_add", 1_000_000)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("country_base_influence_produces_add", 1000),
+                new ModifierGenerator("country_resource_max_influence_add", 1_000_000)
+            ]
         ),
         new(
             name: "Ship_Boost",
-            modifiers: new ModifierGenerator[]
-            {
-                new("ship_fire_rate_mult", .5),
-                new("ship_evasion_mult", .25),
-                new("ship_speed_mult", .25)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("ship_fire_rate_mult", .5),
+                new ModifierGenerator("ship_evasion_mult", .25),
+                new ModifierGenerator("ship_speed_mult", .25)
+            ]
         ),
         new(
             name: "Leader_Boost",
-            modifiers: new ModifierGenerator[]
-            {
-                new("leader_skill_levels", 5),
-                new("species_leader_exp_gain", 5)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("leader_skill_levels", 5),
+                new ModifierGenerator("species_leader_exp_gain", 5)
+            ]
         ),
         new(
             name: "Planet_Boost",
-            modifiers: new ModifierGenerator[]
-            {
-                new("planet_building_build_speed_mult", 10),
-                new("building_time_mult", -0.9)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("planet_building_build_speed_mult", 10),
+                new ModifierGenerator("building_time_mult", -0.9)
+            ]
         ),
         new(
             name: "Unity_Boost",
-            modifiers: new ModifierGenerator[]
-            {
-                new("country_unity_produces_mult", 40)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("country_unity_produces_mult", 40)
+            ]
         ),
         new(
             name: "Pop_growth_boost",
-            modifiers: new ModifierGenerator[]
-            {
-                new("pop_growth_speed", 100),
+            modifiers:
+            [
+                new ModifierGenerator("pop_growth_speed", 100),
                 //new ModifierGenerator("pop_robot_build_speed_mult",100),
-                new("planet_pop_assembly_add", 100)
-            }
+                new ModifierGenerator("planet_pop_assembly_add", 100)
+            ]
         ),
         new(
             name: "megastructure_booster",
-            modifiers: new ModifierGenerator[]
-            {
-                new("megastructure_build_speed_mult", 100),
+            modifiers:
+            [
+                new ModifierGenerator("megastructure_build_speed_mult", 100)
                 //new ModifierGenerator("mod_megastructure_build_cost_mult", -1.0)
-            }
+            ]
         ),
         //new StaticEdictGenerator
         // (
@@ -188,18 +222,18 @@ public class Edicts
         // ),
         new(
             name: "more_leaders",
-            modifiers: new ModifierGenerator[]
-            {
-                new("country_leader_cap", 100),
-                new("country_leader_pool_size", 200)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("country_leader_cap", 100),
+                new ModifierGenerator("country_leader_pool_size", 200)
+            ]
         ),
         new(
             name: "Trade_Attactive",
-            modifiers: new ModifierGenerator[]
-            {
-                new("country_trade_attractiveness", 20)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("country_trade_attractiveness", 20)
+            ]
         ),
         //new StaticEdictGenerator
         // (
@@ -211,17 +245,17 @@ public class Edicts
         // ),
         new(
             name: "Cheep_Fast_Orbital",
-            modifiers: new ModifierGenerator[]
-            {
-                new("country_ship_upgrade_cost_mult", -.99),
-                new("starbase_shipyard_capacity_add", 10),
-                new("starbase_shipyard_build_cost_mult", -0.99),
-                new("starbase_shipyard_build_time_mult", -.99),
-                new("starbase_shipyard_build_speed_mult", 1000),
-                new("starbase_upgrade_cost_mult", -.99),
-                new("starbase_upgrade_time_mult", 0),
-                new("starbase_upgrade_speed_mult", 1000)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("country_ship_upgrade_cost_mult", -.99),
+                new ModifierGenerator("starbase_shipyard_capacity_add", 10),
+                new ModifierGenerator("starbase_shipyard_build_cost_mult", -0.99),
+                new ModifierGenerator("starbase_shipyard_build_time_mult", -.99),
+                new ModifierGenerator("starbase_shipyard_build_speed_mult", 1000),
+                new ModifierGenerator("starbase_upgrade_cost_mult", -.99),
+                new ModifierGenerator("starbase_upgrade_time_mult", 0),
+                new ModifierGenerator("starbase_upgrade_speed_mult", 1000)
+            ]
         ),
         new(
             name: "Rare_Resouce_Boost_30x_Multiplier",
@@ -229,7 +263,7 @@ public class Edicts
             (
                 modifierFormat: "country_{0}_produces_mult",
                 modifierValue: 30,
-                modifierNames: ModifierNamesData.RareResouces
+                modifierNames: ModifierNamesData.RareResources
             )
         ),
         new(
@@ -238,44 +272,44 @@ public class Edicts
             (
                 modifierFormat: "country_base_{0}_produces_add",
                 modifierValue: 1000,
-                modifierNames: ModifierNamesData.RareResouces
+                modifierNames: ModifierNamesData.RareResources
             )
         ),
         new(
             name: "Administrative_Overload_100x_Multiplier",
-            modifiers: new ModifierGenerator[]
-            {
-                new("country_admin_cap_mult", 100)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("country_admin_cap_mult", 100)
+            ]
         ),
         new(
             name: "Administrative_Overload_1000_Add",
-            modifiers: new ModifierGenerator[]
-            {
-                new("country_admin_cap_add", 1000)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("country_admin_cap_add", 1000)
+            ]
         ),
         new(
             name: "Colonial_DevelopmentSpeed_Overload_20x",
-            modifiers: new ModifierGenerator[]
-            {
-                new("planet_colony_development_speed_mult", 20)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("planet_colony_development_speed_mult", 20)
+            ]
         ),
         new(
             name: "Terraforming_Overdrive",
-            modifiers: new ModifierGenerator[]
-            {
-                new("terraform_speed_mult", 10),
-                new("terraforming_cost_mult", -0.90)
-            }
+            modifiers:
+            [
+                new ModifierGenerator("terraform_speed_mult", 10),
+                new ModifierGenerator("terraforming_cost_mult", -0.90)
+            ]
         ),
         new(
             name: "Shipyard_Overdrive",
-            modifiers: new ModifierGenerator[]
-            {
-                new("country_ship_upgrade_cost_mult", -.99),
-            }
+            modifiers:
+            [
+                new ModifierGenerator("country_ship_upgrade_cost_mult", -.99)
+            ]
         ),
         new(
             name: "Shipbuild_Speed_Override",
