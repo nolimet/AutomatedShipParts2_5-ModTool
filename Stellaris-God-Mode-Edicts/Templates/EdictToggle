@@ -1,5 +1,5 @@
-$## {{edictName}}
-$godEdict_{{edictName}}_on ={
+## {{edictName}}
+godEdict_{{edictName}}_on ={
 	length = 0
 	resources = {
 		category = edicts
@@ -22,7 +22,7 @@ $godEdict_{{edictName}}_on ={
 		}
 }
 
-$godEdict_{{edictName}}_off ={
+godEdict_{{edictName}}_off ={
 	length = 0
 
 	resources = {

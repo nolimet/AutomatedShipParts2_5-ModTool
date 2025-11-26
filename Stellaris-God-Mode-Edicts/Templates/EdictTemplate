@@ -1,0 +1,15 @@
+##{{edictName}}
+
+godEdict_{{edictName}} = {
+	length = -1
+	icon = "god_Edict_Icon"
+
+	resources = {
+    		category = edicts
+    		cost = { influence = 0 }
+    }
+
+	modifier = {{StaticEffect}}
+	allow = {}
+    ai_weight = { weight = 0 }
+}
