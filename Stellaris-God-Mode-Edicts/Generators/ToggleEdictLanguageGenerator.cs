@@ -1,10 +1,10 @@
 ﻿namespace GodModeEdicts.Generators;
 
-internal readonly struct LanguageGenerator
+internal readonly struct ToggleEdictLanguageGenerator
 {
     private readonly StaticEdictGenerator edict;
 
-    private LanguageGenerator(StaticEdictGenerator edict) => this.edict = edict;
+    private ToggleEdictLanguageGenerator(StaticEdictGenerator edict) => this.edict = edict;
 
     public override string ToString() =>
         $"#godEdict_{edict.Name}\n" +
@@ -15,14 +15,14 @@ internal readonly struct LanguageGenerator
         $"edict_godEdict_{edict.Name}_on_desc:0 \"Enable {edict.NiceName} modifier \"\n" +
         $"edict_godEdict_{edict.Name}_off_desc:0 \"Disable {edict.NiceName} modifier \"\n\n";
 
-    private static string Join(IEnumerable<LanguageGenerator> generators, string langueName) =>
+    private static string Join(IEnumerable<ToggleEdictLanguageGenerator> generators, string langueName) =>
         $"l_{langueName}:\n\n" +
         string.Join("", generators);
 
     public static string GenerateFile(Edicts edicts, string langueName)
     {
-        var generators = new List<LanguageGenerator>();
-        for (var i = 0; i < edicts.Length; i++) generators.Add(new LanguageGenerator(edicts[i]));
+        var generators = new List<ToggleEdictLanguageGenerator>();
+        for (var i = 0; i < edicts.Length; i++) generators.Add(new ToggleEdictLanguageGenerator(edicts[i]));
 
         return Join(generators, langueName);
     }

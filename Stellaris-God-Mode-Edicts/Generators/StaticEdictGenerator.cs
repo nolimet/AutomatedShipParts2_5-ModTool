@@ -22,7 +22,9 @@ public class StaticEdictGenerator
         NiceName = niceName;
     }
 
-    public override string ToString() => $"godEdict_{Name} = {{\n{ModifierGenerator.Join(modifiers)}\n}}\n";
+    public string GetEffect() => $"{{\n{ModifierGenerator.Join(modifiers)}\n}}";
+
+    public override string ToString() => $"godEdict_{Name} = {GetEffect()}\n";
 
     public static string Join(IEnumerable<StaticEdictGenerator> edicts)
     {

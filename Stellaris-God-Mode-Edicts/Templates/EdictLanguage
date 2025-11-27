@@ -1,0 +1,4 @@
+﻿#godEdict_$$edictName$$
+edict_godEdict_$$edictName$$:0 "£god_Edict_Icon£ $$edictNiceName$$"
+edict_godEdict_$$edictName$$_desc:0 ""
+

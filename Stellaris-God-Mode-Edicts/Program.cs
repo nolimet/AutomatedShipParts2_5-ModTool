@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using GodModeEdicts.Generators;
+﻿using GodModeEdicts.Generators;
 using GodModeEdicts.Helpers;
 
 namespace GodModeEdicts;
@@ -8,42 +7,22 @@ internal class Program
 {
     public static bool DumpFileContent = false;
 
-    private static async Task Main(string[] args)
+    private static void Main(string[] args)
     {
         if (args != null) DumpFileContent = args.Any(x => x == "dumpFileContent");
 
-        await Task.Delay(10);
-        try
-        {
-            await GenerateEdictFile();
-        }
-        catch (Exception e)
-        {
-            Console.Write(e);
-        }
-    }
-
-    private static async Task GenerateEdictFile()
-    {
         var edicts = new Edicts();
 
         var dir = Directory.GetCurrentDirectory();
         Console.WriteLine($"PATH : {dir}");
         Console.WriteLine();
 
-        await Task.Delay(100);
-        await FileWriter.WriteFileTxt(EdictToggleGenerator.GenerateFile(edicts), "edicts", @"common\edicts");
-        await FileWriter.WriteFileTxt(EventGenerator.GenerateFile(edicts), "events", @"events");
-        await FileWriter.WriteFileTxt(StaticEdictGenerator.Join(edicts.All), "statics", @"common\static_modifiers");
-
-        await FileWriter.WriteFileYml(LanguageGenerator.GenerateFile(edicts, "english"), "english", @"localisation");
-
-        Console.WriteLine("\nPress any key to exit");
-        Console.ReadKey();
-
-        Process.Start(dir);
-
-        Console.WriteLine("\nExiting program");
-        await Task.Delay(500);
+        FileWriter.WriteFileTxt(EdictGenerator.GenerateFile(edicts), "edicts", @"common\edicts");
+        // FileWriter.WriteFileTxt(EdictToggleGenerator.GenerateFile(edicts), "edicts", @"common\edicts");
+        // FileWriter.WriteFileTxt(EventGenerator.GenerateFile(edicts), "events", @"events");
+        // FileWriter.WriteFileTxt(StaticEdictGenerator.Join(edicts.All), "statics", @"common\static_modifiers");
+        //
+        // FileWriter.WriteFileYml(ToggleEdictLanguageGenerator.GenerateFile(edicts, "english"), "english", @"localisation");
+        FileWriter.WriteFileYml(EdictLanguageGenerator.GenerateFile(edicts, "english"), "english", @"localisation");
     }
 }

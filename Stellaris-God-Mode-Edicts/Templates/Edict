@@ -9,7 +9,7 @@ godEdict_$$edictName$$ = {
     		cost = { influence = 0 }
     }
 
-	modifier = godEdict_$$edictName$$
+	modifier = $$effect$$
 	allow = {}
     ai_weight = { weight = 0 }
 }
