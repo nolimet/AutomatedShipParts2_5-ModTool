@@ -28,7 +28,7 @@ else
 
 if (string.IsNullOrWhiteSpace(config.BaseGamePath) || !Directory.Exists(config.BaseGamePath))
 {
-    AnsiConsole.MarkupLine($"[underline red]Path not found at {config.BaseGamePath}[/]");
+    AnsiConsole.MarkupLine($"[red]Path not found at [underline]{config.BaseGamePath}[/][/]");
     return;
 }
 
@@ -37,27 +37,32 @@ if (!Directory.Exists(partsPath))
     AnsiConsole.WriteLine("NOPE");
 
 List<BaseRulesWriter> usedWriters = [];
-
 var vanillaWriter = new VanillaRulesWriter("vanilla/vanilla.rules");
+
 vanillaWriter.Init();
 vanillaWriter.WriteVanillaData(config.BaseGamePath);
 
 var connector = new SteamCmdConnector(799600);
 await connector.Init();
 
+await Task.Delay(100);
 var list = connector.DownloadWorkshopItems(config.Mods);
+
 foreach (var (path, modId) in list)
 {
     var modWriter = new ModdedRulesWriter(path, modId, config.IgnoredParts.GetValueOrDefault(modId), $"mods/{modId}/{modId}.rules");
+    await Task.Delay(100);
     usedWriters.Add(modWriter);
     modWriter.Init();
     modWriter.WriteModData();
 }
 
+await Task.Delay(100);
 var modRulesWriter = new ModRulesWriter();
 modRulesWriter.Init();
 modRulesWriter.WriteModRules(vanillaWriter, usedWriters, config.ManualMods);
-await modRulesWriter.DisposeAsync();
 
+await Task.Delay(100);
+await modRulesWriter.DisposeAsync();
 foreach (var usedWriter in usedWriters) await usedWriter.DisposeAsync();
 await vanillaWriter.DisposeAsync();
