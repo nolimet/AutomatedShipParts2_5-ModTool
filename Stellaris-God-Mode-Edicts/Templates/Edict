@@ -1,6 +1,6 @@
-##{{edictName}}
+##$$edictName$$
 
-godEdict_{{edictName}} = {
+godEdict_$$edictName$$ = {
 	length = -1
 	icon = "god_Edict_Icon"
 
@@ -9,7 +9,7 @@ godEdict_{{edictName}} = {
     		cost = { influence = 0 }
     }
 
-	modifier = {{StaticEffect}}
+	modifier = godEdict_$$edictName$$
 	allow = {}
     ai_weight = { weight = 0 }
 }
