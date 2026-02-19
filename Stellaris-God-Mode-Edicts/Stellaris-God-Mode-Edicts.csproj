@@ -7,6 +7,7 @@
         <RootNamespace>GodModeEdicts</RootNamespace>
         <OutputType>Exe</OutputType>
         <IsPackable>false</IsPackable>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,4 +20,10 @@
         <ProjectReference Include="..\ModGenLib\ModGenLib.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Remove="Templates\Edict"/>
+        <EmbeddedResource Include="Templates\Edict"/>
+        <None Remove="Templates\EdictLanguage"/>
+        <EmbeddedResource Include="Templates\EdictLanguage"/>
+    </ItemGroup>
 </Project>

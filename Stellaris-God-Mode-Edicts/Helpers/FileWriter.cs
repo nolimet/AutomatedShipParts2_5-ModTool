@@ -15,34 +15,37 @@ public static class FileWriter
     private static readonly Encoding encoding = new UTF8Encoding(false);
     private static readonly Encoding encodingYML = new UTF8Encoding(true);
 
-    public static async Task WriteFileTxt(string value, string fileName, string folder = "")
+    public static void WriteFileTxt(string value, string fileName, string folder)
+    {
+        while (!outputDir.Exists) Console.WriteLine("Waiting for output dir to appear!");
+
+        var directory = outputDir.CreateSubdirectory(folder);
+        if (!directory.Exists)
+            directory.Create();
+
+        WriteText(value, $"{directory.FullName}\\godEdict_{fileName}.txt", encoding);
+    }
+
+    public static void WriteFileYml(string value, string fileName, string folder = "")
     {
         var directory = outputDir.CreateSubdirectory(folder);
         if (!directory.Exists)
             directory.Create();
 
-        await WriteText(value, $"{directory.FullName}\\godEdict_{fileName}.txt", encoding);
+        WriteText(value, $"{directory.FullName}\\godEdict_l_{fileName}.yml", encodingYML);
     }
 
-    public static async Task WriteFileYml(string value, string fileName, string folder = "")
-    {
-        var directory = outputDir.CreateSubdirectory(folder);
-        if (!directory.Exists)
-            directory.Create();
-
-        await WriteText(value, $"{directory.FullName}\\godEdict_l_{fileName}.yml", encodingYML);
-    }
-
-    private static async Task WriteText(string value, string fullPath, Encoding encoding)
+    private static void WriteText(string value, string fullPath, Encoding encoding)
     {
         var file = new FileInfo(fullPath);
-        using (var fileStream = file.Exists ? file.OpenWrite() : file.Create())
+
+        using (var fileStream = file.Create())
         {
             using (var writer = new StreamWriter(fileStream, encoding))
             {
                 try
                 {
-                    await writer.WriteAsync(value);
+                    writer.Write(value);
                 }
                 catch (Exception e)
                 {
