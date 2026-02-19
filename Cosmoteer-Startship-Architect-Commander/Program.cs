@@ -6,6 +6,9 @@ using ModGenLib.Connectors;
 using Newtonsoft.Json;
 using AnsiConsole = Spectre.Console.AnsiConsole;
 
+if (Console.OutputEncoding.CodePage == 437) // DOS/OEM encoding
+    Console.OutputEncoding = Encoding.UTF8;
+
 var configPath = Path.Combine(AppContext.BaseDirectory, "ExportConfig.json");
 TargetConfiguration config;
 
