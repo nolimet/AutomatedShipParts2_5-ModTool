@@ -9,16 +9,7 @@
 {
 	Type = PartCrew
 	Crew = {RequiredCrew}
-	DefaultPriority = &{DefaultPriority}
-	PrerequisitesBeforeCrewing = [{PrerequisitesBeforeCrewing}, Needs{ComponentName}Minus{CounterName}]
-    HighPriorityPrerequisites = [{HighPriorityPrerequisites}]
+	PrerequisitesBeforeCrewing = [{PrerequisitesBeforeCrewing}Needs{ComponentName}Minus{CounterName}]
 	OverridePriorityKey = {PriorityKey}
-	CrewDestinations
-	[
-		{CrewDestinations}
-	]
-	CrewLocations
-	[
-		{CrewLocations}
-	]
+	{Fields}
 }

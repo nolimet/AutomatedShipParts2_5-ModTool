@@ -1,0 +1,1 @@
+﻿	{IgnoreIfNotExisting = true; Action = Replace; Replace = "<../../../workshop/content/799600/{ModID}/{PartPath}>/{ValuePath}"; With = {Value}}

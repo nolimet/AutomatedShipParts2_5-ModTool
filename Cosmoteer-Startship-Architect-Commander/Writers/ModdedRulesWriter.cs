@@ -10,6 +10,13 @@ public class ModdedRulesWriter(string modPath, string gamePath, ulong modId, IRe
     private const string ModFolderName = "mods";
     private static readonly string ModsPath = Path.Combine(BasePath, ModFolderName);
 
+    private static readonly ActionTemplates Templates = new(
+        TemplateStorage.ActionTemplateModded,
+        TemplateStorage.ActionTemplateModdedRemove,
+        TemplateStorage.ActionTemplateModdedReplace,
+        TemplateStorage.ActionTemplateModdedAddBase
+    );
+
     private ModInfo? _modInfo;
 
     public override void Init()
@@ -37,30 +44,16 @@ public class ModdedRulesWriter(string modPath, string gamePath, ulong modId, IRe
         var modBasePath = Path.Combine(ModsPath, modId.ToString());
         Directory.CreateDirectory(modBasePath);
 
-        var (parts, report, issueCount) = PartSource.GetModParts(modPath, gamePath, ignoredParts);
-        Console.WriteLine($"Found {parts.Count} valid parts of which {issueCount} has issues");
+        var (crew, partCount, report, issueCount) = PartSource.GetModParts(modPath, gamePath, ignoredParts);
+        Console.WriteLine($"Found {partCount} valid parts of which {issueCount} has issues");
         if (report.Rows.Count > 1)
             AnsiConsole.Write(report);
 
         Writer.WriteLine();
         Writer.WriteLine($"\t//{modInfo.Name}, version {modInfo.Version}, game version {modInfo.GameVersion}");
 
-        foreach (var (path, crewComponents) in parts)
-        {
-            var partName = path.Split('/')[^1].Split('\\')[^1];
-            Dictionary<string, string> actionReplacements = new()
-            {
-                { "PartName", partName },
-                { "PartPath", string.Join('/', path.Replace(modPath, string.Empty).Split('\\')[1..]) },
-                { "CrewCount", GetTotalCrewCount(crewComponents) },
-                { "ModID", modId.ToString() },
-                { "OverrideRulePath", partName /*Path.Combine(ModFolderName, modId.ToString(), partName)*/ }
-            };
-
-            actionReplacements["RemoveActions"] = GetRemoveActions(TemplateStorage.ActionTemplateModdedRemove, crewComponents, actionReplacements);
-            Writer.WriteLine(FillTemplate(TemplateStorage.ActionTemplateModded, actionReplacements));
-            CreateOverride(modBasePath, partName, crewComponents);
-        }
+        WriteCrewOverrides(crew, modBasePath, Templates, path => string.Join('/', path.Replace(modPath, string.Empty).Split('\\')[1..]),
+            new Dictionary<string, string> { { "ModID", modId.ToString() } });
 
         Console.WriteLine();
     }

@@ -1,0 +1,1 @@
+﻿	{IgnoreIfNotExisting = true; Action = AddBase; AddBaseTo = "<../../../workshop/content/799600/{ModID}/{PartPath}>/{ComponentsPath}"; BaseToAdd = &<{OverrideRulePath}>}

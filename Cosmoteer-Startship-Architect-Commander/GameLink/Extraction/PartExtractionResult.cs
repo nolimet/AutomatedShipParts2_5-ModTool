@@ -17,7 +17,7 @@ public enum PartExtractionStatus
 /// <summary>
 ///     The outcome of reading one .rules file. <see cref="Problems" /> explains failures and also lists notes for extracted parts (e.g. no HighPriorityPrerequisites).
 /// </summary>
-public sealed record PartExtractionResult(string File, PartExtractionStatus Status, IReadOnlyList<CrewData>? CrewData, IReadOnlyList<string> Problems)
+public sealed record PartExtractionResult(string File, PartExtractionStatus Status, PartCrewData? CrewData, IReadOnlyList<string> Problems)
 {
     public static PartExtractionResult NotACrewedPart(string file) => new(file, PartExtractionStatus.NotACrewedPart, null, []);
     public static PartExtractionResult Failed(string file, params string[] problems) => new(file, PartExtractionStatus.Failed, null, problems);

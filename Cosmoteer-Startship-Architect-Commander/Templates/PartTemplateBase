@@ -17,16 +17,7 @@ Needs{ComponentName}MinusNone
 {
 	Type = PartCrew
 	Crew = {CrewCount}
-	DefaultPriority = &{DefaultPriority}
-	PrerequisitesBeforeCrewing = [{PrerequisitesBeforeCrewing}, Needs{ComponentName}MinusNone]
-	HighPriorityPrerequisites = [{HighPriorityPrerequisites}]
-	CrewDestinations
-	[
-		{CrewDestinations}
-	]
-	CrewLocations
-	[
-		{CrewLocations}
-	]
+	PrerequisitesBeforeCrewing = [{PrerequisitesBeforeCrewing}Needs{ComponentName}MinusNone]
 	{MinusNonePriorityKey}
+	{Fields}
 }

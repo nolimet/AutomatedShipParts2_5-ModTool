@@ -57,8 +57,9 @@ public static class ModInfoHelper
 
         AnsiConsole.Write(g);
 
-        if (nameResult.Success && versionResult.Success && gameVersionResult.Success)
-            return new ModInfo(nameResult.Groups[1].Value.Trim().Trim('"'), versionResult.Groups[1].Value.Trim().Trim('"'), gameVersion);
+        // The game version is optional in mod.rules, the game loads mods without it just fine
+        if (nameResult.Success && versionResult.Success)
+            return new ModInfo(nameResult.Groups[1].Value.Trim().Trim('"'), versionResult.Groups[1].Value.Trim().Trim('"'), gameVersion ?? "unknown");
         return null;
     }
 }

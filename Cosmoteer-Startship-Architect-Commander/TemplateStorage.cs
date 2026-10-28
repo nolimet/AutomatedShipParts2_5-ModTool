@@ -9,6 +9,10 @@ public static class TemplateStorage
     public static readonly string ActionTemplateModded = TemplateLoadHelper.LoadTemplate(nameof(ActionTemplateModded), Assembly.GetExecutingAssembly());
     public static readonly string ActionTemplateVanillaRemove = TemplateLoadHelper.LoadTemplate(nameof(ActionTemplateVanillaRemove), Assembly.GetExecutingAssembly());
     public static readonly string ActionTemplateModdedRemove = TemplateLoadHelper.LoadTemplate(nameof(ActionTemplateModdedRemove), Assembly.GetExecutingAssembly());
+    public static readonly string ActionTemplateVanillaReplace = TemplateLoadHelper.LoadTemplate(nameof(ActionTemplateVanillaReplace), Assembly.GetExecutingAssembly());
+    public static readonly string ActionTemplateModdedReplace = TemplateLoadHelper.LoadTemplate(nameof(ActionTemplateModdedReplace), Assembly.GetExecutingAssembly());
+    public static readonly string ActionTemplateVanillaAddBase = TemplateLoadHelper.LoadTemplate(nameof(ActionTemplateVanillaAddBase), Assembly.GetExecutingAssembly());
+    public static readonly string ActionTemplateModdedAddBase = TemplateLoadHelper.LoadTemplate(nameof(ActionTemplateModdedAddBase), Assembly.GetExecutingAssembly());
     public static readonly string PartTemplateBase = TemplateLoadHelper.LoadTemplate(nameof(PartTemplateBase), Assembly.GetExecutingAssembly());
     public static readonly string PartTemplateRepeat = TemplateLoadHelper.LoadTemplate(nameof(PartTemplateRepeat), Assembly.GetExecutingAssembly());
     public static readonly string ModRulesBase = TemplateLoadHelper.LoadTemplate(nameof(ModRulesBase), Assembly.GetExecutingAssembly());

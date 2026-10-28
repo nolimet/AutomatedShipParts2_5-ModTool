@@ -1,0 +1,1 @@
+﻿	{Action = Replace; Replace = "<{PartPath}>/{ValuePath}"; With = {Value}}

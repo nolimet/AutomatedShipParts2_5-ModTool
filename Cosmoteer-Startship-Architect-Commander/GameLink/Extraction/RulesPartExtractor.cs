@@ -13,12 +13,12 @@ namespace Cosmoteer.GameLink.Extraction;
 public static class RulesPartExtractor
 {
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static (Dictionary<string, IReadOnlyList<CrewData>> parts, Grid report, uint issueCount) GetVanillaParts(string gamePath) =>
+    public static (PartCrewData crew, int partCount, Grid report, uint issueCount) GetVanillaParts(string gamePath) =>
         ToReport(ExtractVanilla(gamePath));
 
     /// <param name="ignoredParts">Regexes matched against the part's file path, matching parts are skipped</param>
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static (Dictionary<string, IReadOnlyList<CrewData>> parts, Grid report, uint issueCount) GetModParts(string modPath, string gamePath, IReadOnlyList<string>? ignoredParts) =>
+    public static (PartCrewData crew, int partCount, Grid report, uint issueCount) GetModParts(string modPath, string gamePath, IReadOnlyList<string>? ignoredParts) =>
         ToReport(ExtractMod(modPath, gamePath, ignoredParts));
 
     private static IReadOnlyList<PartExtractionResult> ExtractVanilla(string gamePath)
@@ -60,17 +60,54 @@ public static class RulesPartExtractor
             }
 
             var result = PartCrewReader.Read(file, part.Part);
-            if (result.Status != PartExtractionStatus.NotACrewedPart) results.Add(result);
+            if (result.Status != PartExtractionStatus.NotACrewedPart) results.Add(ToRootPaths(rootPath, result));
         }
 
         return results;
     }
 
-    private static (Dictionary<string, IReadOnlyList<CrewData>> parts, Grid report, uint issueCount) ToReport(IReadOnlyList<PartExtractionResult> results)
+    /// <summary>
+    ///     Puts the files of the targets and replacements in the same form as the part files, which is what the writers use to build the paths.
+    ///     Crew inherited from outside the root (e.g. a mod part based on a vanilla part) is overridden by the writer of that root, so it's left out here.
+    /// </summary>
+    private static PartExtractionResult ToRootPaths(string rootPath, PartExtractionResult result)
     {
-        var parts = results
-            .Where(x => x.Status == PartExtractionStatus.Extracted)
-            .ToDictionary(x => x.File, x => x.CrewData!);
+        if (result.CrewData is not { } crew) return result;
+
+        List<string> problems = [..result.Problems];
+
+        List<CrewOverrideTarget> targets = [];
+        foreach (var target in crew.Targets)
+        {
+            if (ToRootPath(rootPath, target.File) is { } file)
+                targets.Add(new CrewOverrideTarget(file, target.ComponentsPath, target.CrewComponents));
+            else
+                problems.Add($"Crew is inherited from {target.File}, it's overridden there");
+        }
+
+        var replacements = crew.Replacements
+            .Select(x => ToRootPath(rootPath, x.File) is { } file ? new CrewReferenceReplacement(file, x.Path, x.Value) : (CrewReferenceReplacement?)null)
+            .OfType<CrewReferenceReplacement>()
+            .ToList();
+
+        return result with { CrewData = new PartCrewData(targets, replacements), Problems = problems };
+    }
+
+    private static string? ToRootPath(string rootPath, string file)
+    {
+        var relativePath = Path.GetRelativePath(rootPath, PartRegistry.GetPathAsOnDisk(Path.GetFullPath(file)));
+        return relativePath.StartsWith("..") || Path.IsPathRooted(relativePath) ? null : Path.Combine(rootPath, relativePath);
+    }
+
+    private static (PartCrewData crew, int partCount, Grid report, uint issueCount) ToReport(IReadOnlyList<PartExtractionResult> results)
+    {
+        var extracted = results.Where(x => x.Status == PartExtractionStatus.Extracted).Select(x => x.CrewData!.Value).ToList();
+
+        // Parts that inherit the same crew (e.g. mk2 and mk3 from mk1) share one override
+        var crew = new PartCrewData(
+            extracted.SelectMany(x => x.Targets).DistinctBy(x => (x.File, x.ComponentsPath)).ToList(),
+            extracted.SelectMany(x => x.Replacements).DistinctBy(x => (x.File, x.Path)).ToList()
+        );
 
         var issues = results.Where(x => x.Problems.Count > 0).ToArray();
 
@@ -85,6 +122,6 @@ public static class RulesPartExtractor
                 Markup.Escape(string.Join("; ", issue.Problems))
             );
 
-        return (parts, grid, (uint)issues.Length);
+        return (crew, extracted.Count, grid, (uint)issues.Length);
     }
 }

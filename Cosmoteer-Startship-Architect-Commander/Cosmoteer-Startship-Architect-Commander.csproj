@@ -21,6 +21,10 @@
         <EmbeddedResource Include="Templates\ActionTemplateVanilla"/>
         <EmbeddedResource Include="Templates\ActionTemplateModdedRemove"/>
         <EmbeddedResource Include="Templates\ActionTemplateVanillaRemove"/>
+        <EmbeddedResource Include="Templates\ActionTemplateModdedReplace"/>
+        <EmbeddedResource Include="Templates\ActionTemplateVanillaReplace"/>
+        <EmbeddedResource Include="Templates\ActionTemplateModdedAddBase"/>
+        <EmbeddedResource Include="Templates\ActionTemplateVanillaAddBase"/>
         <EmbeddedResource Include="Templates\ModRulesBase"/>
         <EmbeddedResource Include="Templates\PartTemplateBase"/>
         <EmbeddedResource Include="Templates\PartTemplateRepeat"/>

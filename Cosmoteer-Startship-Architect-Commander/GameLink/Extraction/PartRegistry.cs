@@ -122,7 +122,7 @@ public static class PartRegistry
     ///     The path comes from the reference as the mod wrote it, e.g. <c>dpmqmining_laser_small</c> for a file named <c>dpmQmining_laser_small</c>.
     ///     Windows doesn't care, but the generated actions should point at the file as it is named.
     /// </summary>
-    private static string GetPathAsOnDisk(string path)
+    public static string GetPathAsOnDisk(string path)
     {
         if (Path.GetDirectoryName(path) is not { } directory) return path;
 
