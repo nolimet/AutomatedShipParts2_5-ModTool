@@ -2,6 +2,7 @@
 
 using System.Text;
 using Cosmoteer.Config;
+using Cosmoteer.GameLink;
 using Cosmoteer.Writers;
 using ModGenLib.Connectors;
 using Newtonsoft.Json;
@@ -28,6 +29,12 @@ else
     var raw = File.ReadAllText(configPath) ?? throw new InvalidDataException("Json not valid!");
     config = JsonConvert.DeserializeObject<TargetConfiguration>(raw) ?? throw new NullReferenceException("Conversion failed");
     File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
+}
+
+if (args.Length > 0 && args[0] == "--probe-game")
+{
+    GameProbe.Run(config.BaseGamePath, args[1..]);
+    return;
 }
 
 if (string.IsNullOrWhiteSpace(config.BaseGamePath) || !Directory.Exists(config.BaseGamePath))
