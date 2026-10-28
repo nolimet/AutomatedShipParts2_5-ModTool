@@ -1,4 +1,4 @@
-PartCrewMinus{CounterName}
+{ComponentName}Minus{CounterName}
 {
 	Type = BuffToggle
 	BuffType = AephixAITerminal

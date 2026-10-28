@@ -1,0 +1,1 @@
+﻿	{IgnoreIfNotExisting = true; Action = Remove; Remove = "<../../../workshop/content/799600/{ModID}/{PartPath}>/Part/Components/{ComponentName}"}

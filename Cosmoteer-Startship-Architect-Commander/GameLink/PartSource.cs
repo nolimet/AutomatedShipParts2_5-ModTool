@@ -12,14 +12,14 @@ namespace Cosmoteer.GameLink;
 /// </summary>
 public static class PartSource
 {
-    public static (Dictionary<string, CrewData> parts, Grid report, uint issueCount) GetVanillaParts(string gamePath) =>
+    public static (Dictionary<string, IReadOnlyList<CrewData>> parts, Grid report, uint issueCount) GetVanillaParts(string gamePath) =>
 #if COSMOTEER_LINKED
         RulesPartExtractor.GetVanillaParts(gamePath);
 #else
         throw NotLinked();
 #endif
 
-    public static (Dictionary<string, CrewData> parts, Grid report, uint issueCount) GetModParts(string modPath, string gamePath, IReadOnlyList<string>? ignoredParts) =>
+    public static (Dictionary<string, IReadOnlyList<CrewData>> parts, Grid report, uint issueCount) GetModParts(string modPath, string gamePath, IReadOnlyList<string>? ignoredParts) =>
 #if COSMOTEER_LINKED
         RulesPartExtractor.GetModParts(modPath, gamePath, ignoredParts);
 #else

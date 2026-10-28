@@ -13,12 +13,12 @@ namespace Cosmoteer.GameLink.Extraction;
 public static class RulesPartExtractor
 {
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static (Dictionary<string, CrewData> parts, Grid report, uint issueCount) GetVanillaParts(string gamePath) =>
+    public static (Dictionary<string, IReadOnlyList<CrewData>> parts, Grid report, uint issueCount) GetVanillaParts(string gamePath) =>
         ToReport(ExtractVanilla(gamePath));
 
     /// <param name="ignoredParts">Regexes matched against the part's file path, matching parts are skipped</param>
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static (Dictionary<string, CrewData> parts, Grid report, uint issueCount) GetModParts(string modPath, string gamePath, IReadOnlyList<string>? ignoredParts) =>
+    public static (Dictionary<string, IReadOnlyList<CrewData>> parts, Grid report, uint issueCount) GetModParts(string modPath, string gamePath, IReadOnlyList<string>? ignoredParts) =>
         ToReport(ExtractMod(modPath, gamePath, ignoredParts));
 
     private static IReadOnlyList<PartExtractionResult> ExtractVanilla(string gamePath)
@@ -66,11 +66,11 @@ public static class RulesPartExtractor
         return results;
     }
 
-    private static (Dictionary<string, CrewData> parts, Grid report, uint issueCount) ToReport(IReadOnlyList<PartExtractionResult> results)
+    private static (Dictionary<string, IReadOnlyList<CrewData>> parts, Grid report, uint issueCount) ToReport(IReadOnlyList<PartExtractionResult> results)
     {
         var parts = results
             .Where(x => x.Status == PartExtractionStatus.Extracted)
-            .ToDictionary(x => x.File, x => x.CrewData!.Value);
+            .ToDictionary(x => x.File, x => x.CrewData!);
 
         var issues = results.Where(x => x.Problems.Count > 0).ToArray();
 

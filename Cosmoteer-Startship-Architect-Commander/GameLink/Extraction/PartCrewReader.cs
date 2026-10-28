@@ -10,8 +10,8 @@ namespace Cosmoteer.GameLink.Extraction;
 /// </summary>
 public static class PartCrewReader
 {
-    // The override templates remove and replace exactly <file>/Part/Components/PartCrew, so the component has to be named PartCrew
-    private const string PartCrewPath = "Components/PartCrew";
+    // The override templates remove and replace <file>/Part/Components/<name> for every PartCrew component
+    private const string ComponentsPath = "Components";
 
     /// <param name="file">The file path to report, in the form the writers expect</param>
     /// <param name="part">The parsed <c>Part</c> node</param>
@@ -30,14 +30,40 @@ public static class PartCrewReader
 
     private static PartExtractionResult ReadPartCrew(string file, OTGroupNode part)
     {
-        if (!part.TryFindAtPath(PartCrewPath, out var partCrewNode) || partCrewNode is not OTGroupNode partCrew)
+        if (!part.TryFindAtPath(ComponentsPath, out var componentsNode) || componentsNode is not OTGroupNode components)
             return PartExtractionResult.NotACrewedPart(file);
 
-        if (!partCrew.TryGetNode("Type", out IOTNode? typeNode) || RulesText.Dereference(typeNode) is not OTFieldNode { Value: "PartCrew" })
+        // Most parts have a single PartCrew, but e.g. the manipulator beam has PartCrew1..4 with one crew per beam
+        // Components without crew (e.g. crewless variants of the manipulator beam in other mods) don't need an override, so they are left as is
+        var crewComponents = components.GetChildren().OfType<OTGroupNode>().Where(x => IsPartCrew(x) && !HasNoCrew(x)).ToList();
+        if (crewComponents.Count == 0)
             return PartExtractionResult.NotACrewedPart(file);
 
         List<string> problems = [];
+        List<CrewData> crewData = [];
 
+        foreach (var component in crewComponents)
+        {
+            // Only prefix the problems when there's more than one component, so single crew parts read as before
+            var componentProblems = new List<string>();
+            if (ReadComponent(component, componentProblems) is { } data) crewData.Add(data);
+            problems.AddRange(crewComponents.Count == 1 ? componentProblems : componentProblems.Select(x => $"{component.Name}: {x}"));
+        }
+
+        if (crewData.Count != crewComponents.Count)
+            return PartExtractionResult.Failed(file, problems.ToArray());
+
+        return new PartExtractionResult(file, PartExtractionStatus.Extracted, crewData, problems);
+    }
+
+    private static bool IsPartCrew(OTGroupNode component) =>
+        component.TryGetNode("Type", out IOTNode? typeNode) && RulesText.Dereference(typeNode!) is OTFieldNode { Value: "PartCrew" };
+
+    private static bool HasNoCrew(OTGroupNode component) =>
+        component.TryGetNode("Crew", out IOTNode? crewNode) && RulesText.Dereference(crewNode!) is OTFieldNode field && int.TryParse(field.Value, out var crew) && crew == 0;
+
+    private static CrewData? ReadComponent(OTGroupNode partCrew, List<string> problems)
+    {
         var crewCount = ReadCrewCount(partCrew, problems);
         var defaultPriority = ReadDefaultPriority(partCrew, problems);
         var locations = ReadList(partCrew, "CrewLocations", false, Environment.NewLine, problems);
@@ -46,12 +72,13 @@ public static class PartCrewReader
         var highPriorityPrerequisites = ReadList(partCrew, "HighPriorityPrerequisites", false, ", ", null) ?? string.Empty;
 
         if (crewCount is not > 0 || defaultPriority == null || locations == null || destinations == null || crewingPrerequisites == null)
-            return PartExtractionResult.Failed(file, problems.ToArray());
+            return null;
 
         if (highPriorityPrerequisites.Length == 0) problems.Add("No HighPriorityPrerequisites");
 
-        var crewData = new CrewData
+        return new CrewData
         (
+            componentName: partCrew.Name,
             locations: locations,
             destinations: destinations,
             crewCount: crewCount.Value.ToString(),
@@ -59,8 +86,6 @@ public static class PartCrewReader
             crewingPrerequisites: crewingPrerequisites,
             highPriorityPrerequisites: highPriorityPrerequisites
         );
-
-        return new PartExtractionResult(file, PartExtractionStatus.Extracted, crewData, problems);
     }
 
     private static int? ReadCrewCount(OTGroupNode partCrew, List<string> problems)

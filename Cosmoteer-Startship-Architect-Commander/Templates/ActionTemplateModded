@@ -1,4 +1,4 @@
 ﻿	//{PartName}
-	{IgnoreIfNotExisting = true; Action = Remove; Remove = "<../../../workshop/content/799600/{ModID}/{PartPath}>/Part/Components/PartCrew"}
+{RemoveActions}
 	{IgnoreIfNotExisting = true; Action = Replace; Replace = "<../../../workshop/content/799600/{ModID}/{PartPath}>/Part/Stats/CrewRequired"; With = {CrewCount}}
 	{IgnoreIfNotExisting = true; Action = AddBase; AddBaseTo = "<../../../workshop/content/799600/{ModID}/{PartPath}>/Part/Components"; BaseToAdd = &<{OverrideRulePath}>}

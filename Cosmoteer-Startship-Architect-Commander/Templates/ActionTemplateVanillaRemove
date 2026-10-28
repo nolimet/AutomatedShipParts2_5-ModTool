@@ -1,0 +1,1 @@
+﻿	{Action = Remove; Remove = "<{PartPath}>/Part/Components/{ComponentName}"}

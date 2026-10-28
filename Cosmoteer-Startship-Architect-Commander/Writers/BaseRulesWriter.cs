@@ -26,16 +26,46 @@ public abstract class BaseRulesWriter : IDisposable, IAsyncDisposable
 
     public string GetRelativePath() => _path;
 
-    protected void CreateOverride(string basePath, string partName, CrewData crewData)
+    protected static string GetTotalCrewCount(IReadOnlyList<CrewData> crewComponents) => crewComponents.Sum(x => int.Parse(x.CrewCount)).ToString();
+
+    protected string GetRemoveActions(string template, IReadOnlyList<CrewData> crewComponents, Dictionary<string, string> actionReplacements) =>
+        string.Join(Environment.NewLine, crewComponents.Select(x => FillTemplate(template, new Dictionary<string, string>(actionReplacements) { { "ComponentName", x.ComponentName } })));
+
+    /// <summary>
+    ///     Writes the override for every PartCrew component of a part into one file.
+    ///     Parts like the manipulator beam split their crew over multiple components (PartCrew1..4, one crew each),
+    ///     the buff values continue over the components so the buff still removes one crew per level: buff 1 frees PartCrew1, buff 2 also PartCrew2, etc.
+    /// </summary>
+    protected void CreateOverride(string basePath, string partName, IReadOnlyList<CrewData> crewComponents)
+    {
+        var partOverride = File.CreateText(Path.Combine(basePath, partName));
+
+        // All crew components of a part share one priority, like the original components do
+        var priorityKey = $"{crewComponents[0].ComponentName}MinusNone";
+        var buffOffset = 0;
+
+        foreach (var crewData in crewComponents)
+        {
+            WriteComponentOverride(partOverride, crewData, buffOffset, priorityKey);
+            buffOffset += int.Parse(crewData.CrewCount);
+        }
+
+        partOverride.Flush();
+        partOverride.Close();
+    }
+
+    private void WriteComponentOverride(StreamWriter partOverride, CrewData crewData, int buffOffset, string priorityKey)
     {
         var crewCount = int.Parse(crewData.CrewCount);
-        var partOverride = File.CreateText(Path.Combine(basePath, partName));
         List<string> crewToggleNames = [];
 
-        for (var i = 0; i <= crewCount; i++) crewToggleNames.Add($"PartCrewMinus{NumberToText.Convert(i)}");
+        for (var i = 0; i <= crewCount; i++) crewToggleNames.Add($"{crewData.ComponentName}Minus{NumberToText.Convert(i)}");
+
+        var minusNoneName = crewToggleNames[0];
 
         Dictionary<string, string> partReplacements = new()
         {
+            { "ComponentName", crewData.ComponentName },
             { "CrewCount", crewData.CrewCount },
             { "CrewDestinations", FormatCrewLocation(crewData.Destinations) },
             { "CrewLocations", FormatCrewLocation(crewData.Locations) },
@@ -43,7 +73,9 @@ public abstract class BaseRulesWriter : IDisposable, IAsyncDisposable
             { "PrerequisitesBeforeCrewing", crewData.CrewingPrerequisites },
             { "HighPriorityPrerequisites", crewData.HighPriorityPrerequisites },
             { "TogglesMinusNone", string.Join(", ", crewToggleNames[1..]) },
-            { "CrewToggles", string.Join(", ", crewToggleNames) }
+            { "CrewToggles", string.Join(", ", crewToggleNames) },
+            { "PriorityKey", priorityKey },
+            { "MinusNonePriorityKey", minusNoneName == priorityKey ? string.Empty : $"OverridePriorityKey = {priorityKey}" }
         };
 
         partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateBase, partReplacements));
@@ -51,18 +83,14 @@ public abstract class BaseRulesWriter : IDisposable, IAsyncDisposable
         for (var i = 1; i <= crewCount - 1; i++)
         {
             partReplacements["CounterName"] = NumberToText.Convert(i);
-            partReplacements["Counter"] = i.ToString();
+            partReplacements["Counter"] = (buffOffset + i).ToString();
             partReplacements["RequiredCrew"] = Math.Max(0, crewCount - i).ToString();
             partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateRepeat, partReplacements));
         }
 
         partReplacements["CounterName"] = NumberToText.Convert(crewCount);
-        partReplacements["Counter"] = crewCount.ToString();
+        partReplacements["Counter"] = (buffOffset + crewCount).ToString();
         partOverride.WriteLine(FillTemplate(TemplateStorage.PartTemplateFinal, partReplacements));
-        ;
-
-        partOverride.Flush();
-        partOverride.Close();
     }
 
     protected string FillTemplate(string template, Dictionary<string, string> replaceCommands)

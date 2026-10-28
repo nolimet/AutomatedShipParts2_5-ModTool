@@ -19,6 +19,8 @@
     <ItemGroup>
         <EmbeddedResource Include="Templates\ActionTemplateModded"/>
         <EmbeddedResource Include="Templates\ActionTemplateVanilla"/>
+        <EmbeddedResource Include="Templates\ActionTemplateModdedRemove"/>
+        <EmbeddedResource Include="Templates\ActionTemplateVanillaRemove"/>
         <EmbeddedResource Include="Templates\ModRulesBase"/>
         <EmbeddedResource Include="Templates\PartTemplateBase"/>
         <EmbeddedResource Include="Templates\PartTemplateRepeat"/>

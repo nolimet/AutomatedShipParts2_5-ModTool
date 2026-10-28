@@ -24,19 +24,20 @@ public class VanillaRulesWriter(string path) : BaseRulesWriter(path)
         if (report.Rows.Count > 1)
             AnsiConsole.Write(report);
 
-        foreach (var (path, crewData) in parts)
+        foreach (var (path, crewComponents) in parts)
         {
             var partName = path.Split('/')[^1].Split('\\')[^1];
             Dictionary<string, string> actionReplacements = new()
             {
                 { "PartName", path.Split('/')[^1].Split('\\')[^1] },
                 { "PartPath", string.Join('/', path.Replace(basePath, string.Empty).Split('\\')[2..]) },
-                { "CrewCount", crewData.CrewCount },
+                { "CrewCount", GetTotalCrewCount(crewComponents) },
                 { "OverrideRulePath", partName }
             };
+            actionReplacements["RemoveActions"] = GetRemoveActions(TemplateStorage.ActionTemplateVanillaRemove, crewComponents, actionReplacements);
             Writer.WriteLine(FillTemplate(TemplateStorage.ActionTemplateVanilla, actionReplacements));
             
-            CreateOverride(vanillaBasePAth, partName, crewData);
+            CreateOverride(vanillaBasePAth, partName, crewComponents);
         }
 
         Console.WriteLine();

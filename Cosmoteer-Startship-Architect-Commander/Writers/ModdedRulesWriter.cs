@@ -45,20 +45,21 @@ public class ModdedRulesWriter(string modPath, string gamePath, ulong modId, IRe
         Writer.WriteLine();
         Writer.WriteLine($"\t//{modInfo.Name}, version {modInfo.Version}, game version {modInfo.GameVersion}");
 
-        foreach (var (path, crewData) in parts)
+        foreach (var (path, crewComponents) in parts)
         {
             var partName = path.Split('/')[^1].Split('\\')[^1];
             Dictionary<string, string> actionReplacements = new()
             {
                 { "PartName", partName },
                 { "PartPath", string.Join('/', path.Replace(modPath, string.Empty).Split('\\')[1..]) },
-                { "CrewCount", crewData.CrewCount },
+                { "CrewCount", GetTotalCrewCount(crewComponents) },
                 { "ModID", modId.ToString() },
                 { "OverrideRulePath", partName /*Path.Combine(ModFolderName, modId.ToString(), partName)*/ }
             };
 
+            actionReplacements["RemoveActions"] = GetRemoveActions(TemplateStorage.ActionTemplateModdedRemove, crewComponents, actionReplacements);
             Writer.WriteLine(FillTemplate(TemplateStorage.ActionTemplateModded, actionReplacements));
-            CreateOverride(modBasePath, partName, crewData);
+            CreateOverride(modBasePath, partName, crewComponents);
         }
 
         Console.WriteLine();
