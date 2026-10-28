@@ -29,4 +29,6 @@
     <ItemGroup>
         <ProjectReference Include="..\ModGenLib\ModGenLib.csproj"/>
     </ItemGroup>
+
+    <Import Project="Cosmoteer.Game.props"/>
 </Project>
