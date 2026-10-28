@@ -1,10 +1,11 @@
 ﻿using Cosmoteer.Data;
+using Cosmoteer.GameLink;
 using Cosmoteer.Helpers;
 using Spectre.Console;
 
 namespace Cosmoteer.Writers;
 
-public class ModdedRulesWriter(string modPath, ulong modId, IReadOnlyList<string>? ignoredParts, string path) : BaseRulesWriter(path)
+public class ModdedRulesWriter(string modPath, string gamePath, ulong modId, IReadOnlyList<string>? ignoredParts, string path) : BaseRulesWriter(path)
 {
     private const string ModFolderName = "mods";
     private static readonly string ModsPath = Path.Combine(BasePath, ModFolderName);
@@ -36,7 +37,7 @@ public class ModdedRulesWriter(string modPath, ulong modId, IReadOnlyList<string
         var modBasePath = Path.Combine(ModsPath, modId.ToString());
         Directory.CreateDirectory(modBasePath);
 
-        var (parts, report, issueCount) = PartHelper.GetParts(modPath, ignoredParts);
+        var (parts, report, issueCount) = PartSource.GetModParts(modPath, gamePath, ignoredParts);
         Console.WriteLine($"Found {parts.Count} valid parts of which {issueCount} has issues");
         if (report.Rows.Count > 1)
             AnsiConsole.Write(report);

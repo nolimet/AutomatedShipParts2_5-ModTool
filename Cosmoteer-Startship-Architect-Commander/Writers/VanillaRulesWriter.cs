@@ -1,4 +1,4 @@
-﻿using Cosmoteer.Helpers;
+﻿using Cosmoteer.GameLink;
 using Spectre.Console;
 
 namespace Cosmoteer.Writers;
@@ -19,7 +19,7 @@ public class VanillaRulesWriter(string path) : BaseRulesWriter(path)
     {
         var vanillaBasePAth = Path.Combine(BasePath, "vanilla");
         Directory.CreateDirectory(vanillaBasePAth);
-        var (parts, report, issueCount) = PartHelper.GetParts(basePath);
+        var (parts, report, issueCount) = PartSource.GetVanillaParts(basePath);
         AnsiConsole.WriteLine($"Found {parts.Count} vanilla parts of which {issueCount} has issues");
         if (report.Rows.Count > 1)
             AnsiConsole.Write(report);
