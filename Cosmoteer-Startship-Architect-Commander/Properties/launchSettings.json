@@ -6,6 +6,10 @@
     "Probe game assemblies": {
       "commandName": "Project",
       "commandLineArgs": "--probe-game"
+    },
+    "Compare extraction (regex vs game parser)": {
+      "commandName": "Project",
+      "commandLineArgs": "--compare-extraction"
     }
   }
 }
