@@ -37,6 +37,11 @@
         </AssemblyAttribute>
     </ItemGroup>
 
+    <!-- Code that uses the game's types only compiles when the game is linked -->
+    <ItemGroup Condition="'$(CosmoteerLinked)' != 'true'">
+        <Compile Remove="$(MSBuildThisFileDirectory)GameLink\Extraction\**"/>
+    </ItemGroup>
+
     <Target Name="ReportCosmoteerLink" BeforeTargets="CoreCompile">
         <Message Importance="high" Condition="'$(CosmoteerLinked)' == 'true'" Text="Cosmoteer game assemblies linked from $(CosmoteerBinPath)"/>
         <Warning Condition="'$(CosmoteerLinked)' != 'true'" Text="Cosmoteer.dll not found in '$(CosmoteerBinPath)'. Game assemblies are not linked; set CosmoteerGamePath in Cosmoteer.Game.props.user or the COSMOTEER_GAME_PATH environment variable."/>
