@@ -11,9 +11,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2025.2.2"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
-        <PackageReference Include="Spectre.Console" Version="0.53.0"/>
+        <PackageReference Include="Spectre.Console" Version="0.57.2" />
     </ItemGroup>
 
     <ItemGroup>
