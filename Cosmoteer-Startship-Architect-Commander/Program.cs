@@ -47,6 +47,13 @@ var partsPath = Path.Combine(config.BaseGamePath ?? throw new NullReferenceExcep
 if (!Directory.Exists(partsPath))
     AnsiConsole.WriteLine("NOPE");
 
+// The game's parser is used to read the parts, its assemblies have to be resolvable before any writer runs
+if (!GameAssemblyResolver.Register(config.BaseGamePath))
+{
+    AnsiConsole.MarkupLine("[red]Cosmoteer game assemblies not found, set CosmoteerGamePath in Cosmoteer.Game.props.user and rebuild.[/]");
+    return;
+}
+
 List<BaseRulesWriter> usedWriters = [];
 var vanillaWriter = new VanillaRulesWriter("vanilla/vanilla.rules");
 
@@ -61,7 +68,7 @@ var list = connector.DownloadWorkshopItems(config.Mods);
 
 foreach (var (path, modId) in list)
 {
-    var modWriter = new ModdedRulesWriter(path, modId, config.IgnoredParts.GetValueOrDefault(modId), $"mods/{modId}/{modId}.rules");
+    var modWriter = new ModdedRulesWriter(path, config.BaseGamePath, modId, config.IgnoredParts.GetValueOrDefault(modId), $"mods/{modId}/{modId}.rules");
     await Task.Delay(100);
     usedWriters.Add(modWriter);
     modWriter.Init();
