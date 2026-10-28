@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Generate": {
+      "commandName": "Project"
+    },
+    "Probe game assemblies": {
+      "commandName": "Project",
+      "commandLineArgs": "--probe-game"
+    }
+  }
+}
