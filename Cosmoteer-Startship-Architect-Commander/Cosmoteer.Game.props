@@ -1,0 +1,44 @@
+<Project>
+    <!--
+        Links the Cosmoteer game assemblies from a local install without copying them into the repo or the build output.
+
+        Where the game is looked up (first match wins):
+          1. CosmoteerGamePath set in Cosmoteer.Game.props.user (git-ignored, see Cosmoteer.Game.props.user.example)
+          2. The COSMOTEER_GAME_PATH environment variable
+          3. The default Steam install location
+
+        When Cosmoteer.dll is found, COSMOTEER_LINKED is defined so game-dependent code can be guarded with #if COSMOTEER_LINKED.
+        The assemblies are referenced with Private=false, so they are resolved from the game's Bin folder at runtime (see GameAssemblyResolver).
+    -->
+    <Import Project="$(MSBuildThisFileDirectory)Cosmoteer.Game.props.user" Condition="Exists('$(MSBuildThisFileDirectory)Cosmoteer.Game.props.user')"/>
+
+    <PropertyGroup>
+        <CosmoteerGamePath Condition="'$(CosmoteerGamePath)' == ''">$(COSMOTEER_GAME_PATH)</CosmoteerGamePath>
+        <CosmoteerGamePath Condition="'$(CosmoteerGamePath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Cosmoteer</CosmoteerGamePath>
+        <CosmoteerBinPath>$([MSBuild]::EnsureTrailingSlash('$(CosmoteerGamePath)'))Bin\</CosmoteerBinPath>
+        <CosmoteerLinked Condition="Exists('$(CosmoteerBinPath)Cosmoteer.dll')">true</CosmoteerLinked>
+        <DefineConstants Condition="'$(CosmoteerLinked)' == 'true'">$(DefineConstants);COSMOTEER_LINKED</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(CosmoteerLinked)' == 'true'">
+        <Reference Include="Cosmoteer">
+            <HintPath>$(CosmoteerBinPath)Cosmoteer.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="HalflingCore" Condition="Exists('$(CosmoteerBinPath)HalflingCore.dll')">
+            <HintPath>$(CosmoteerBinPath)HalflingCore.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+
+        <!-- Lets the app find the game's Bin folder at runtime without extra configuration -->
+        <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+            <_Parameter1>CosmoteerBinPath</_Parameter1>
+            <_Parameter2>$(CosmoteerBinPath)</_Parameter2>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <Target Name="ReportCosmoteerLink" BeforeTargets="CoreCompile">
+        <Message Importance="high" Condition="'$(CosmoteerLinked)' == 'true'" Text="Cosmoteer game assemblies linked from $(CosmoteerBinPath)"/>
+        <Warning Condition="'$(CosmoteerLinked)' != 'true'" Text="Cosmoteer.dll not found in '$(CosmoteerBinPath)'. Game assemblies are not linked; set CosmoteerGamePath in Cosmoteer.Game.props.user or the COSMOTEER_GAME_PATH environment variable."/>
+    </Target>
+</Project>

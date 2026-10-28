@@ -1,0 +1,6 @@
+<Project>
+    <!-- Copy this file to Cosmoteer.Game.props.user (git-ignored) and point it to your local install -->
+    <PropertyGroup>
+        <CosmoteerGamePath>F:\SteamLibrary\steamapps\common\Cosmoteer</CosmoteerGamePath>
+    </PropertyGroup>
+</Project>
